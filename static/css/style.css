@@ -1,36 +1,63 @@
-:root { --nasa-blue: #00d4ff; --dark: #020202; }
-
-body { margin: 0; background: var(--dark); color: white; font-family: 'Courier New', monospace; overflow: hidden; }
-
-/* Cinematic HUD Overlay */
-.hud-overlay {
-    position: relative;
-    border: 1px solid var(--nasa-blue);
-    background: rgba(0, 212, 255, 0.05);
-    backdrop-filter: blur(12px);
-    padding: 30px;
-    border-radius: 4px;
-    box-shadow: inset 0 0 30px rgba(0, 212, 255, 0.1);
+:root {
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --text: #0f172a;
+    --accent: #10b981;
+    --rent: #3b82f6;
+    --glass: rgba(255, 255, 255, 0.7);
 }
 
-.glitch-text {
-    font-size: 3rem;
-    color: var(--nasa-blue);
-    text-shadow: 0 0 10px var(--nasa-blue);
-    margin: 0;
+[data-theme="dark"] {
+    --bg: #0f172a;
+    --card: #1e293b;
+    --text: #f1f5f9;
+    --glass: rgba(30, 41, 59, 0.7);
 }
 
-.data-card {
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(0, 0, 0, 0.6);
-    padding: 20px;
-    margin-top: 20px;
-    clip-path: polygon(0 0, 100% 0, 100% 85%, 90% 100%, 0 100%);
+body { 
+    margin: 0; 
+    background: var(--bg); 
+    color: var(--text); 
+    font-family: 'Plus Jakarta Sans', sans-serif; 
 }
 
-.scanner-line {
-    position: absolute; top: 0; left: 0; width: 100%; height: 2px;
-    background: var(--nasa-blue);
-    animation: scan 4s linear infinite;
+.navbar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1rem 10%; background: var(--glass);
+    backdrop-filter: blur(12px); border-bottom: 1px solid rgba(0,0,0,0.05);
+    position: sticky; top: 0; z-index: 1000;
 }
-@keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
+
+.logo { font-size: 1.8rem; font-weight: 800; color: var(--accent); }
+.logo span { color: var(--text); }
+
+.hero {
+    text-align: center; padding: 100px 20px;
+    background: linear-gradient(to bottom, rgba(16, 185, 129, 0.05), transparent);
+}
+
+.hero h1 { font-size: 3.5rem; letter-spacing: -2px; margin-bottom: 10px; }
+.hero span { color: var(--accent); }
+
+.product-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 30px; padding: 40px 10%;
+}
+
+.hs-card {
+    background: var(--card); border-radius: 24px; overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05); transition: 0.4s;
+    position: relative; border: 1px solid rgba(0,0,0,0.05);
+}
+
+.hs-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+
+.badge {
+    position: absolute; top: 15px; left: 15px;
+    padding: 6px 14px; border-radius: 12px; font-weight: 800; font-size: 0.7rem;
+}
+.sell { background: var(--accent); color: white; }
+.rent { background: var(--rent); color: white; }
+
+.card-content { padding: 20px; }
+.price { font-size: 1.4rem; font-weight: 800; color: var(--accent); }
