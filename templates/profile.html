@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}HandShake | Profile{% endblock %}
+
+{% block content %}
+<div class="nav-container" style="margin-top: 40px; display: flex; gap: 40px;">
+    <aside style="flex: 1; max-width: 300px; padding: 24px; border: 1px solid var(--border); border-radius: 12px; height: fit-content;">
+        <div style="text-align: center; margin-bottom: 24px;">
+            <div style="font-size: 64px; color: var(--accent);"><i class="fas fa-user-shield"></i></div>
+            <h2 style="margin-top: 12px; font-weight: 800;">{{ current_user.full_name or current_user.username }}</h2>
+            <p style="color: var(--text-secondary);"><i class="fas fa-map-marker-alt"></i> {{ current_user.region }} | <i class="fas fa-birthday-cake"></i> Age: {{ current_user.age or 'Verified' }}</p>
+            <div style="display: inline-block; background: #ecfdf5; color: #059669; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; margin-top: 8px;">
+                <i class="fas fa-check-circle"></i> KYC Verified
+            </div>
+        </div>
+        <div class="dropdown-divider"></div>
+        <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 24px;">
+            <a href="#" style="font-weight: 600;"><i class="fas fa-cog" style="margin-right: 12px;"></i> Account Settings</a>
+            <a href="#" style="font-weight: 600;"><i class="fas fa-history" style="margin-right: 12px;"></i> History</a>
+            <a href="/upload" style="font-weight: 600; color: var(--accent);"><i class="fas fa-plus" style="margin-right: 12px;"></i> Post New Item</a>
+        </div>
+    </aside>
+
+    <div style="flex: 3;">
+        <h2 style="margin-bottom: 24px;">Your Items</h2>
+        <div class="product-grid" style="padding: 0; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));">
+            {% for item in items %}
+            <div class="hs-card">
+                <div class="card-img-wrapper" style="aspect-ratio: 1/1;">
+                    <img src="{{ item.image_url }}" alt="{{ item.title }}">
+                </div>
+                <div class="card-content">
+                    <h3>{{ item.title }}</h3>
+                    <p class="price">{{ item.price }} TMT {% if item.type == 'rent' %}<span>/ day</span>{% endif %}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -3,22 +3,50 @@
 {% block title %}HandShake | Home{% endblock %}
 
 {% block content %}
-<section class="hero">
-    <h1>Buy, Sell, or Rent. <br> Simple as a <span>HandShake.</span></h1>
-    <input type="text" class="search-input" placeholder="Search for cars, houses, tools...">
-</section>
+<div class="categories-container">
+    <div class="categories-scroll">
+        <div class="category-item active" data-category="all">
+            <div class="category-icon"><i class="fas fa-th"></i></div>
+            <div class="category-label">All Items</div>
+        </div>
+        <div class="category-item" data-category="hobbies">
+            <div class="category-icon"><i class="fas fa-icons"></i></div>
+            <div class="category-label">Hobbies</div>
+        </div>
+        <div class="category-item" data-category="tech">
+            <div class="category-icon"><i class="fas fa-laptop"></i></div>
+            <div class="category-label">Tech</div>
+        </div>
+        <div class="category-item" data-category="cars">
+            <div class="category-icon"><i class="fas fa-car"></i></div>
+            <div class="category-label">Cars</div>
+        </div>
+        <div class="category-item" data-category="houses">
+            <div class="category-icon"><i class="fas fa-home"></i></div>
+            <div class="category-label">Houses</div>
+        </div>
+        <div class="category-item" data-category="tools">
+            <div class="category-icon"><i class="fas fa-tools"></i></div>
+            <div class="category-label">Tools</div>
+        </div>
+        <div class="category-item" data-category="books">
+            <div class="category-icon"><i class="fas fa-book"></i></div>
+            <div class="category-label">Books</div>
+        </div>
+    </div>
+</div>
 
 <div class="product-grid">
     {% for item in items %}
-    <div class="hs-card">
-        <div class="card-img-wrapper" style="position:relative">
-            <span class="badge badge-{{ item.type }}">{{ item.type.upper() }}</span>
-            <img src="{{ item.image_url }}" alt="{{ item.title }}" width="100%">
+    <div class="hs-card" data-category="{{ item.category }}">
+        <div class="card-img-wrapper">
+            <span class="badge">{{ item.type.upper() }}</span>
+            <img src="{{ item.image_url or 'https://images.unsplash.com/photo-1555685812-4b943f1cb0eb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=60' }}" alt="{{ item.title }}">
         </div>
-        <div style="padding: 1rem;">
+        <div class="card-content">
             <h3>{{ item.title }}</h3>
-            <p class="price">{{ item.price }} TMT {% if item.type == 'rent' %}/ day{% endif %}</p>
-            <p class="location">{{ item.location }}</p>
+            <p class="location">{{ item.loc or 'Ashgabat' }}</p>
+            <p class="price">{{ item.price }} TMT {% if item.type == 'rent' %}<span>/ day</span>{% endif %}</p>
         </div>
     </div>
     {% endfor %}
