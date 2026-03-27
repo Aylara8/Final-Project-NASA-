@@ -1,13 +1,15 @@
 import os
 import base64
-import re
+import binascii
 from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from werkzeug.exceptions import RequestEntityTooLarge
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from io import BytesIO
+from flask_migrate import Migrate
 
 app = Flask(__name__)
 app.secret_key = 'handshake_secret_key'
@@ -15,11 +17,58 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///handshake.db'
 app.config['UPLOAD_FOLDER'] = 'static/uploads/passports'
 app.config['UPLOAD_FOLDER_ITEMS'] = 'static/uploads/items'
 app.config['UPLOAD_FOLDER_PROFILES'] = 'static/uploads/profiles'
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
+app.config['MAX_CONTENT_LENGTH'] = 24 * 1024 * 1024
 
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
+
+
+def save_data_url_image(data_url, destination_path):
+    if not data_url or ',' not in data_url:
+        raise ValueError("Missing image data")
+
+    _, encoded = data_url.split(',', 1)
+    try:
+        image_bytes = base64.b64decode(encoded)
+    except (ValueError, binascii.Error) as exc:
+        raise ValueError("Invalid image data") from exc
+
+    with open(destination_path, "wb") as fh:
+        fh.write(image_bytes)
+
+
+def find_chat_request_between(user_a_id, user_b_id):
+    return ChatRequest.query.filter(
+        ((ChatRequest.sender_id == user_a_id) & (ChatRequest.recipient_id == user_b_id)) |
+        ((ChatRequest.sender_id == user_b_id) & (ChatRequest.recipient_id == user_a_id))
+    ).order_by(ChatRequest.timestamp.desc()).first()
+
+
+def has_accepted_chat_between(user_a_id, user_b_id):
+    return ChatRequest.query.filter(
+        (
+            ((ChatRequest.sender_id == user_a_id) & (ChatRequest.recipient_id == user_b_id)) |
+            ((ChatRequest.sender_id == user_b_id) & (ChatRequest.recipient_id == user_a_id))
+        ) &
+        (ChatRequest.status == 'accepted')
+    ).first()
+
+
+@app.errorhandler(RequestEntityTooLarge)
+def handle_request_too_large(_error):
+    flash('The uploaded image is too large. Please use a smaller or compressed image.')
+
+    if request.path == url_for('register'):
+        return redirect(url_for('register'))
+    if request.path == url_for('login'):
+        return redirect(url_for('login'))
+    if request.path == url_for('upload'):
+        return redirect(url_for('upload'))
+    if request.path == url_for('edit_profile'):
+        return redirect(url_for('edit_profile'))
+    return redirect(url_for('index'))
 
 # Models
 class User(UserMixin, db.Model):
@@ -145,6 +194,20 @@ with app.app_context():
         db.session.add(review)
         db.session.commit()
 
+    if not User.query.filter_by(email="friend@handshake.com").first():
+        friend_user = User(
+            username="friend",
+            full_name="Message Friend",
+            email="friend@handshake.com",
+            password_hash=generate_password_hash("friend123", method='scrypt'),
+            region="Ashgabat",
+            bio="Seeded test account for chat checks.",
+            age=27,
+            passport_img="verified.png"
+        )
+        db.session.add(friend_user)
+        db.session.commit()
+
 @app.route('/')
 def dashboard():
     all_items = Item.query.order_by(Item.id.desc()).all()
@@ -157,9 +220,14 @@ def index():
 
 @app.route('/search')
 def search():
-    query = request.args.get('q')
+    query = (request.args.get('q') or "").strip()
     if query:
-        items = Item.query.filter(Item.title.contains(query) | Item.description.contains(query) | Item.category.contains(query)).all()
+        like_query = f"%{query}%"
+        items = Item.query.filter(
+            Item.title.ilike(like_query)
+            | Item.description.ilike(like_query)
+            | Item.category.ilike(like_query)
+        ).all()
     else:
         items = Item.query.all()
     return render_template('index.html', items=items)
@@ -175,39 +243,77 @@ def process_passport():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        email = request.form.get('email')
-        password = request.form.get('password')
+        email = (request.form.get('email') or '').strip().lower()
+        password = request.form.get('password') or ''
         user = User.query.filter_by(email=email).first()
         if user and check_password_hash(user.password_hash, password):
+            if current_user.is_authenticated:
+                logout_user()
             login_user(user)
             return redirect(url_for('index'))
         flash('Invalid email or password')
+    elif current_user.is_authenticated:
+        flash('Sign in below to switch to another account.')
     return render_template('login.html')
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        email = request.form.get('email')
+        email = (request.form.get('email') or "").strip().lower()
+        region = (request.form.get('region') or "").strip()
+        password = request.form.get('password') or ""
+        confirm_password = request.form.get('confirm_password') or ""
+
+        if not region:
+            flash('Please select your region.')
+            return redirect(url_for('register'))
+        if not email:
+            flash('Email is required.')
+            return redirect(url_for('register'))
+        if len(password) < 6:
+            flash('Password must be at least 6 characters.')
+            return redirect(url_for('register'))
+        if password != confirm_password:
+            flash('Passwords do not match.')
+            return redirect(url_for('register'))
+
         if User.query.filter_by(email=email).first():
             flash('Email already exists')
             return redirect(url_for('register'))
+
         passport_data = request.form.get('passport_image')
-        if passport_data:
-            if not os.path.exists(app.config['UPLOAD_FOLDER']):
-                os.makedirs(app.config['UPLOAD_FOLDER'])
+        if not passport_data:
+            flash('Passport photo is required for KYC verification.')
+            return redirect(url_for('register'))
+
+        if not os.path.exists(app.config['UPLOAD_FOLDER']):
+            os.makedirs(app.config['UPLOAD_FOLDER'])
+
+        try:
             filename = secure_filename(f"{email}_passport.png")
             passport_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            with open(passport_path, "wb") as fh:
-                fh.write(base64.b64decode(passport_data.split(',')[1]))
-            new_user = User(
-                username=email, full_name=request.form.get('full_name'),
-                email=email, password_hash=generate_password_hash(request.form.get('password'), method='scrypt'),
-                region=request.form.get('region'), age=int(request.form.get('age') or 0), 
-                passport_img=filename
-            )
-            db.session.add(new_user)
-            db.session.commit()
-            return redirect(url_for('login'))
+            save_data_url_image(passport_data, passport_path)
+        except ValueError:
+            flash('Invalid passport image. Please upload again.')
+            return redirect(url_for('register'))
+
+        age_value = request.form.get('age')
+        parsed_age = int(age_value) if age_value and age_value.isdigit() else None
+        new_user = User(
+            username=email.split("@")[0],
+            full_name=request.form.get('full_name') or email.split("@")[0],
+            email=email,
+            password_hash=generate_password_hash(password, method='scrypt'),
+            region=region,
+            age=parsed_age,
+            passport_img=filename
+        )
+        db.session.add(new_user)
+        db.session.commit()
+        if current_user.is_authenticated:
+            logout_user()
+        flash('Registration complete. You can now log in.')
+        return redirect(url_for('login'))
     return render_template('register.html')
 
 @app.route('/upload', methods=['GET', 'POST'])
@@ -229,8 +335,7 @@ def upload():
         elif camera_image:
             filename = secure_filename(f"{current_user.id}_{datetime.now().timestamp()}_capture.png")
             file_path = os.path.join(app.config['UPLOAD_FOLDER_ITEMS'], filename)
-            with open(file_path, "wb") as fh:
-                fh.write(base64.b64decode(camera_image.split(',')[1]))
+            save_data_url_image(camera_image, file_path)
             image_url = url_for('static', filename=f'uploads/items/{filename}')
             
         new_item = Item(
@@ -248,15 +353,30 @@ def upload():
 def profile(user_id):
     user = User.query.get_or_404(user_id)
     reviews = Review.query.filter_by(target_user_id=user_id).all()
-    # Check if a chat request exists or if users are blocked
-    chat_request = ChatRequest.query.filter(
-        ((ChatRequest.sender_id == current_user.id) & (ChatRequest.recipient_id == user_id)) |
-        ((ChatRequest.sender_id == user_id) & (ChatRequest.recipient_id == current_user.id))
-    ).first() if current_user.is_authenticated else None
-    
-    is_blocked = BlockedUser.query.filter_by(blocker_id=current_user.id, blocked_id=user_id).first() if current_user.is_authenticated else None
-    
-    return render_template('profile.html', user=user, reviews=reviews, chat_request=chat_request, is_blocked=is_blocked)
+    chat_request = None
+    has_blocked_user = False
+    blocked_by_user = False
+    profile_pending_requests = []
+
+    if current_user.is_authenticated:
+        chat_request = find_chat_request_between(current_user.id, user_id)
+        has_blocked_user = BlockedUser.query.filter_by(blocker_id=current_user.id, blocked_id=user_id).first() is not None
+        blocked_by_user = BlockedUser.query.filter_by(blocker_id=user_id, blocked_id=current_user.id).first() is not None
+        if current_user.id == user_id:
+            profile_pending_requests = ChatRequest.query.filter_by(
+                recipient_id=current_user.id,
+                status='pending'
+            ).order_by(ChatRequest.timestamp.desc()).all()
+
+    return render_template(
+        'profile.html',
+        user=user,
+        reviews=reviews,
+        chat_request=chat_request,
+        has_blocked_user=has_blocked_user,
+        blocked_by_user=blocked_by_user,
+        profile_pending_requests=profile_pending_requests
+    )
 
 @app.route('/edit-profile', methods=['GET', 'POST'])
 @login_required
@@ -281,8 +401,7 @@ def edit_profile():
         elif camera_image:
             filename = secure_filename(f"profile_{current_user.id}_capture.png")
             file_path = os.path.join(app.config['UPLOAD_FOLDER_PROFILES'], filename)
-            with open(file_path, "wb") as fh:
-                fh.write(base64.b64decode(camera_image.split(',')[1]))
+            save_data_url_image(camera_image, file_path)
             current_user.profile_pic = url_for('static', filename=f'uploads/profiles/{filename}')
             
         db.session.commit()
@@ -293,12 +412,31 @@ def edit_profile():
 @app.route('/send-chat-request/<int:recipient_id>')
 @login_required
 def send_chat_request(recipient_id):
-    existing = ChatRequest.query.filter_by(sender_id=current_user.id, recipient_id=recipient_id).first()
+    if recipient_id == current_user.id:
+        flash('You cannot chat-request yourself.')
+        return redirect(url_for('profile', user_id=recipient_id))
+
+    if BlockedUser.query.filter(
+        ((BlockedUser.blocker_id == current_user.id) & (BlockedUser.blocked_id == recipient_id)) |
+        ((BlockedUser.blocker_id == recipient_id) & (BlockedUser.blocked_id == current_user.id))
+    ).first():
+        flash('Chat request unavailable because one of you is blocked.')
+        return redirect(url_for('profile', user_id=recipient_id))
+
+    existing = find_chat_request_between(current_user.id, recipient_id)
     if not existing:
         req = ChatRequest(sender_id=current_user.id, recipient_id=recipient_id)
         db.session.add(req)
         db.session.commit()
         flash('Chat request sent!')
+    else:
+        if existing.status == 'accepted':
+            flash('You already have an active chat with this user.')
+            return redirect(url_for('chat', recipient_id=recipient_id))
+        if existing.sender_id == current_user.id:
+            flash('Chat request already exists.')
+        else:
+            flash('This user already sent you a request. Open Messages to accept it.')
     return redirect(url_for('profile', user_id=recipient_id))
 
 @app.route('/accept-chat-request/<int:request_id>')
@@ -308,6 +446,7 @@ def accept_chat_request(request_id):
     if req.recipient_id == current_user.id:
         req.status = 'accepted'
         db.session.commit()
+        return redirect(url_for('chat', recipient_id=req.sender_id))
     return redirect(url_for('chat'))
 
 @app.route('/reject-chat-request/<int:request_id>')
@@ -323,6 +462,10 @@ def reject_chat_request(request_id):
 @app.route('/block-user/<int:user_id>')
 @login_required
 def block_user(user_id):
+    if user_id == current_user.id:
+        flash('You cannot block yourself.')
+        return redirect(url_for('profile', user_id=current_user.id))
+
     existing = BlockedUser.query.filter_by(blocker_id=current_user.id, blocked_id=user_id).first()
     if not existing:
         block = BlockedUser(blocker_id=current_user.id, blocked_id=user_id)
@@ -334,7 +477,7 @@ def block_user(user_id):
         ).delete()
         db.session.commit()
         flash('User blocked.')
-    return redirect(url_for('market'))
+    return redirect(url_for('index'))
 
 @app.route('/unblock-user/<int:user_id>')
 @login_required
@@ -355,9 +498,12 @@ def chat(recipient_id=None):
     ).all()
     
     active_chat_users = []
+    seen_user_ids = set()
     for req in accepted_requests:
         other_user = req.recipient if req.sender_id == current_user.id else req.sender
-        active_chat_users.append(other_user)
+        if other_user and other_user.id not in seen_user_ids:
+            active_chat_users.append(other_user)
+            seen_user_ids.add(other_user.id)
         
     pending_requests = ChatRequest.query.filter_by(recipient_id=current_user.id, status='pending').all()
     
@@ -366,8 +512,10 @@ def chat(recipient_id=None):
     if recipient_id:
         # Verify they are in an accepted chat
         is_authorized = ChatRequest.query.filter(
-            ((ChatRequest.sender_id == current_user.id) & (ChatRequest.recipient_id == recipient_id) |
-             (ChatRequest.sender_id == recipient_id) & (ChatRequest.recipient_id == current_user.id)) &
+            (
+                ((ChatRequest.sender_id == current_user.id) & (ChatRequest.recipient_id == recipient_id)) |
+                ((ChatRequest.sender_id == recipient_id) & (ChatRequest.recipient_id == current_user.id))
+            ) &
             (ChatRequest.status == 'accepted')
         ).first()
         
@@ -387,12 +535,22 @@ def chat(recipient_id=None):
 @login_required
 def send_message():
     recipient_id = request.form.get('recipient_id')
-    body = request.form.get('body')
+    body = (request.form.get('body') or '').strip()
+
+    try:
+        recipient_id = int(recipient_id)
+    except (TypeError, ValueError):
+        flash("Invalid message recipient.")
+        return redirect(url_for('chat'))
     
     # Check if blocked
     if BlockedUser.query.filter_by(blocker_id=recipient_id, blocked_id=current_user.id).first():
         flash("You are blocked by this user.")
         return redirect(url_for('chat'))
+
+    if not has_accepted_chat_between(current_user.id, recipient_id):
+        flash("You need an accepted chat request before sending messages.")
+        return redirect(url_for('profile', user_id=recipient_id))
 
     if recipient_id and body:
         msg = Message(sender_id=current_user.id, recipient_id=recipient_id, body=body)
@@ -411,8 +569,14 @@ def item_detail(item_id):
 @login_required
 def rate_item(item_id):
     item = Item.query.get_or_404(item_id)
-    rating = int(request.form.get('rating'))
-    content = request.form.get('content')
+    rating = int(request.form.get('rating') or 0)
+    content = (request.form.get('content') or '').strip()
+    if rating < 1 or rating > 5:
+        flash('Rating must be between 1 and 5.')
+        return redirect(url_for('item_detail', item_id=item_id))
+    if not content:
+        flash('Review cannot be empty.')
+        return redirect(url_for('item_detail', item_id=item_id))
     review = Review(content=content, rating=rating, reviewer_id=current_user.id, item_id=item_id)
     item.rating = (item.rating * item.num_ratings + rating) / (item.num_ratings + 1)
     item.num_ratings += 1
@@ -427,16 +591,11 @@ def logout():
     return redirect(url_for('index'))
 
 
-@app.route('/profile')
-@login_required
-def profile():
-    # Fetch only items uploaded by the logged-in user
-    user_items = Item.query.filter_by(user_id=current_user.id).all()
+
+
+
+
     
-    # Debugging: Print to console so you can see if items are actually found
-    print(f"DEBUG: Found {len(user_items)} items for user {current_user.username}")
-    
-    return render_template('profile.html', items=user_items)
 
 
 

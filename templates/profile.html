@@ -3,125 +3,199 @@
 {% block title %}HandShake | {{ user.username }}'s Profile{% endblock %}
 
 {% block content %}
-<div class="nav-container" style="padding: 40px; max-width: 1000px;">
-    <!-- Profile Header -->
-    <div style="background: var(--card-bg); border: 1px solid var(--border); border-radius: 24px; overflow: hidden; margin-bottom: 30px; box-shadow: 0 4px 15px var(--shadow);">
-        <div style="height: 180px; background: linear-gradient(135deg, var(--accent), #059669);"></div>
-        <div style="padding: 0 40px 40px; position: relative;">
-            <div style="width: 160px; height: 160px; border-radius: 50%; border: 6px solid var(--card-bg); background: #e5e7eb; position: absolute; top: -80px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+<div class="nav-container profile-page">
+    <div class="profile-header-card">
+        <div class="profile-cover"></div>
+        <div class="profile-header-inner">
+            <div class="profile-avatar">
                 {% if user.profile_pic %}
-                    <img src="{{ user.profile_pic }}" style="width: 100%; height: 100%; object-fit: cover;">
+                <img src="{{ user.profile_pic }}" class="profile-avatar-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';">
+                <div class="profile-avatar-fallback" style="display: none;">
+                    {{ user.username[0].upper() }}
+                </div>
                 {% else %}
-                    <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 4.5rem; font-weight: 800; color: #6b7280;">
-                        {{ user.username[0].upper() }}
-                    </div>
+                <div class="profile-avatar-fallback">
+                    {{ user.username[0].upper() }}
+                </div>
                 {% endif %}
             </div>
-            
-            <div style="margin-top: 90px; display: flex; justify-content: space-between; align-items: flex-start;">
-                <div>
-                    <h1 style="font-size: 2rem; font-weight: 800; color: var(--text-primary);">{{ user.full_name or user.username }}</h1>
-                    <p style="color: var(--text-secondary); font-size: 1.1rem; margin-top: 4px;">
-                        <i class="fas fa-map-marker-alt"></i> {{ user.region }} • Joined {{ user.items|length }} items
+
+            <div class="profile-top">
+                <div class="profile-meta">
+                    <h1>{{ user.full_name or user.username }}</h1>
+                    <p class="profile-location">
+                        <i class="fas fa-map-marker-alt"></i> {{ user.region }} | Joined {{ user.items|length }} items
                     </p>
-                    <div style="display: flex; align-items: center; gap: 12px; margin-top: 15px;">
-                        <span style="background: rgba(16, 185, 129, 0.1); color: var(--accent); padding: 6px 16px; border-radius: 100px; font-size: 0.85rem; font-weight: 700;">
+                    <div class="profile-badges">
+                        <span class="profile-badge">
                             <i class="fas fa-star"></i> {{ "%.1f"|format(user.rating) }} Rating
                         </span>
-                        <span style="background: rgba(16, 185, 129, 0.1); color: var(--accent); padding: 6px 16px; border-radius: 100px; font-size: 0.85rem; font-weight: 700;">
+                        <span class="profile-badge">
                             <i class="fas fa-check-circle"></i> KYC Verified
                         </span>
                     </div>
+                    <div class="profile-stats">
+                        <div class="profile-stat">
+                            <strong>{{ user.items|length }}</strong>
+                            <span>Listings</span>
+                        </div>
+                        <div class="profile-stat">
+                            <strong>{{ reviews|length }}</strong>
+                            <span>Reviews</span>
+                        </div>
+                        <div class="profile-stat">
+                            <strong>{{ user.region }}</strong>
+                            <span>Region</span>
+                        </div>
+                    </div>
                 </div>
-                
-                <div style="display: flex; gap: 10px;">
+
+                <div class="profile-actions">
                     {% if current_user.is_authenticated %}
                         {% if current_user.id == user.id %}
-                            <a href="{{ url_for('edit_profile') }}" class="auth-btn" style="background: #f3f4f6; color: black; border: 1px solid #d1d5db;"><i class="fas fa-edit"></i> Edit Profile</a>
+                            <a href="{{ url_for('edit_profile') }}" class="auth-btn auth-btn-muted"><i class="fas fa-edit"></i> Edit Profile</a>
                         {% else %}
-                            {% if is_blocked %}
-                                <a href="{{ url_for('unblock_user', user_id=user.id) }}" class="auth-btn" style="background: #ef4444;"><i class="fas fa-unlock"></i> Unblock</a>
+                            {% if has_blocked_user %}
+                                <a href="{{ url_for('unblock_user', user_id=user.id) }}" class="auth-btn auth-btn-danger"><i class="fas fa-unlock"></i> Unblock</a>
+                            {% elif blocked_by_user %}
+                                <button class="auth-btn auth-btn-muted" disabled><i class="fas fa-lock"></i> You are blocked</button>
                             {% else %}
                                 {% if chat_request %}
                                     {% if chat_request.status == 'accepted' %}
                                         <a href="{{ url_for('chat', recipient_id=user.id) }}" class="auth-btn"><i class="fas fa-comments"></i> Send Message</a>
                                     {% elif chat_request.status == 'pending' %}
                                         {% if chat_request.sender_id == current_user.id %}
-                                            <button class="auth-btn" disabled style="opacity: 0.7;">Request Pending</button>
+                                            <button class="auth-btn auth-btn-muted" disabled><i class="fas fa-hourglass-half"></i> Request Pending</button>
                                         {% else %}
-                                            <a href="{{ url_for('chat') }}" class="auth-btn">Respond to Request</a>
+                                            <a href="{{ url_for('accept_chat_request', request_id=chat_request.id) }}" class="auth-btn"><i class="fas fa-check"></i> Accept Request</a>
+                                            <a href="{{ url_for('reject_chat_request', request_id=chat_request.id) }}" class="auth-btn auth-btn-muted"><i class="fas fa-times"></i> Decline</a>
                                         {% endif %}
                                     {% endif %}
                                 {% else %}
                                     <a href="{{ url_for('send_chat_request', recipient_id=user.id) }}" class="auth-btn"><i class="fas fa-paper-plane"></i> Request Chat</a>
                                 {% endif %}
-                                <a href="{{ url_for('block_user', user_id=user.id) }}" class="auth-btn" style="background: #f3f4f6; color: #ef4444; border: 1px solid #ef4444;" onclick="return confirm('Block this user?')"><i class="fas fa-ban"></i> Block</a>
+                                <a href="{{ url_for('block_user', user_id=user.id) }}" class="auth-btn auth-btn-outline-danger" onclick="return confirm('Block this user?')"><i class="fas fa-ban"></i> Block</a>
                             {% endif %}
                         {% endif %}
                     {% endif %}
                 </div>
             </div>
-            
-            <div style="margin-top: 30px; border-top: 1px solid var(--border); padding-top: 25px;">
-                <h3 style="font-size: 1.2rem; font-weight: 800; margin-bottom: 12px;">About</h3>
-                <p style="color: var(--text-primary); line-height: 1.6; font-size: 1rem;">
+
+            <div class="profile-about">
+                <h3>About</h3>
+                <p>
                     {{ user.bio or "This user is a proud member of the HandShake community but hasn't written a bio yet." }}
                 </p>
             </div>
+
+            {% if current_user.is_authenticated and current_user.id != user.id %}
+            <div class="profile-status-card">
+                {% if has_blocked_user %}
+                    <i class="fas fa-user-lock"></i> You blocked this user. Unblock them to restore chat requests and messaging.
+                {% elif blocked_by_user %}
+                    <i class="fas fa-ban"></i> This user has blocked you. Chat requests and messages are unavailable.
+                {% elif chat_request and chat_request.status == 'accepted' %}
+                    <i class="fas fa-comments"></i> Chat is active. You can message this user directly now.
+                {% elif chat_request and chat_request.status == 'pending' and chat_request.sender_id == current_user.id %}
+                    <i class="fas fa-hourglass-half"></i> Your chat request is waiting for approval.
+                {% elif chat_request and chat_request.status == 'pending' %}
+                    <i class="fas fa-bell"></i> This user requested to chat with you. Accept or decline above.
+                {% else %}
+                    <i class="fas fa-paper-plane"></i> Send a chat request to start a conversation safely.
+                {% endif %}
+            </div>
+            {% endif %}
         </div>
     </div>
 
-    <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 30px;">
-        <!-- Listings -->
+    <div class="profile-content-grid">
         <div>
-            <div style="background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 30px; box-shadow: 0 4px 12px var(--shadow);">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
-                    <h3 style="font-weight: 800; font-size: 1.3rem;">Listings</h3>
-                    <span style="color: var(--text-secondary); font-weight: 600;">{{ user.items|length }} items total</span>
+            {% if current_user.is_authenticated and current_user.id == user.id and profile_pending_requests %}
+            <div class="profile-panel">
+                <div class="profile-panel-header">
+                    <h3>Pending Chat Requests</h3>
+                    <span>{{ profile_pending_requests|length }} waiting</span>
+                </div>
+
+                <div class="profile-request-list">
+                    {% for req in profile_pending_requests %}
+                    <div class="profile-request-card">
+                        <div class="profile-request-user">
+                            <div class="profile-request-avatar">
+                                {% if req.sender.profile_pic %}
+                                <img src="{{ req.sender.profile_pic }}" class="profile-review-avatar" onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';">
+                                <span class="profile-review-avatar-fallback" style="display: none;">{{ req.sender.username[0].upper() }}</span>
+                                {% else %}
+                                <span class="profile-review-avatar-fallback">{{ req.sender.username[0].upper() }}</span>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <div class="profile-request-name">{{ req.sender.full_name or req.sender.username }}</div>
+                                <a href="{{ url_for('profile', user_id=req.sender.id) }}" class="profile-request-link">View profile</a>
+                            </div>
+                        </div>
+                        <div class="profile-request-actions">
+                            <a href="{{ url_for('accept_chat_request', request_id=req.id) }}" class="auth-btn"><i class="fas fa-check"></i> Accept</a>
+                            <a href="{{ url_for('reject_chat_request', request_id=req.id) }}" class="auth-btn auth-btn-muted"><i class="fas fa-times"></i> Decline</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="profile-panel">
+                <div class="profile-panel-header">
+                    <h3>Listings</h3>
+                    <span>{{ user.items|length }} items total</span>
                 </div>
                 
-                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px;">
+                <div class="profile-listings-grid">
                     {% for item in user.items %}
-                    <a href="{{ url_for('item_detail', item_id=item.id) }}" class="hs-card" style="border: 1px solid var(--border); transition: transform 0.2s;">
-                        <div style="aspect-ratio: 1/1; overflow: hidden; border-radius: 12px;">
-                            <img src="{{ item.image_url }}" style="width: 100%; height: 100%; object-fit: cover;">
+                    <a href="{{ url_for('item_detail', item_id=item.id) }}" class="hs-card profile-item-card">
+                        <div class="profile-item-image-wrap">
+                            <img src="{{ item.image_url }}" class="profile-item-image" onerror="this.style.display='none'; this.parentElement.classList.add('profile-item-image-missing');">
                         </div>
-                        <div style="padding: 15px;">
-                            <div style="font-weight: 800; font-size: 0.95rem; margin-bottom: 5px;">{{ item.title }}</div>
-                            <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <span style="color: var(--accent); font-weight: 800;">{{ item.price }} TMT</span>
-                                <span style="font-size: 0.8rem; color: var(--text-secondary);"><i class="fas fa-star" style="color: #f59e0b;"></i> {{ "%.1f"|format(item.rating) }}</span>
+                        <div class="profile-item-body">
+                            <div class="profile-item-title">{{ item.title }}</div>
+                            <div class="profile-item-meta">
+                                <span class="profile-item-price">{{ item.price }} TMT</span>
+                                <span class="profile-item-rating"><i class="fas fa-star"></i> {{ "%.1f"|format(item.rating) }}</span>
                             </div>
                         </div>
                     </a>
                     {% else %}
-                    <p style="color: var(--text-secondary); grid-column: 1/-1; text-align: center; padding: 40px;">No items listed yet.</p>
+                    <p class="profile-empty">No items listed yet.</p>
                     {% endfor %}
                 </div>
             </div>
         </div>
 
-        <!-- Reviews -->
         <div>
-            <div style="background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 30px; box-shadow: 0 4px 12px var(--shadow);">
-                <h3 style="font-weight: 800; font-size: 1.3rem; margin-bottom: 25px;">Community Feedback</h3>
+            <div class="profile-panel">
+                <h3 class="profile-reviews-title">Community Feedback</h3>
                 
-                <div style="display: flex; flex-direction: column; gap: 20px;">
+                <div class="profile-reviews-list">
                     {% for review in reviews %}
-                    <div style="padding-bottom: 20px; border-bottom: 1px solid var(--border);">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                            <div style="display: flex; align-items: center; gap: 10px;">
-                                <img src="{{ review.reviewer.profile_pic or 'https://ui-avatars.com/api/?name=' + review.reviewer.username }}" style="width: 32px; height: 32px; border-radius: 50%;">
-                                <span style="font-weight: 700; font-size: 0.9rem;">{{ review.reviewer.username }}</span>
+                    <div class="profile-review-item">
+                        <div class="profile-review-head">
+                            <div class="profile-review-user">
+                                {% if review.reviewer.profile_pic %}
+                                <img src="{{ review.reviewer.profile_pic }}" class="profile-review-avatar" onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';">
+                                <span class="profile-review-avatar-fallback" style="display: none;">{{ review.reviewer.username[0].upper() }}</span>
+                                {% else %}
+                                <span class="profile-review-avatar-fallback">{{ review.reviewer.username[0].upper() }}</span>
+                                {% endif %}
+                                <span>{{ review.reviewer.username }}</span>
                             </div>
-                            <span style="color: #f59e0b; font-weight: 700;"><i class="fas fa-star"></i> {{ review.rating }}</span>
+                            <span class="profile-review-rating"><i class="fas fa-star"></i> {{ review.rating }}</span>
                         </div>
-                        <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5; font-style: italic;">"{{ review.content }}"</p>
+                        <p class="profile-review-content">"{{ review.content }}"</p>
                     </div>
                     {% else %}
-                    <div style="text-align: center; padding: 40px 0;">
-                        <i class="fas fa-feather" style="font-size: 2rem; color: var(--accent); opacity: 0.2; margin-bottom: 10px;"></i>
-                        <p style="color: var(--text-secondary); font-size: 0.95rem;">No reviews yet. Be the first to trade!</p>
+                    <div class="profile-empty-state">
+                        <i class="fas fa-feather"></i>
+                        <p>No reviews yet. Be the first to trade!</p>
                     </div>
                     {% endfor %}
                 </div>

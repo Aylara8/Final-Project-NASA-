@@ -124,6 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const canvas = document.getElementById('canvas');
     const processingMsg = document.getElementById('processing-msg');
     const passportFile = document.getElementById('passport-file');
+    const passportImageInput = document.getElementById('passport_image');
 
     // Step Titles & Descriptions
     const stepData = {
@@ -162,6 +163,23 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    async function optimizeImage(source, mimeType = 'image/jpeg', quality = 0.72) {
+        const image = new Image();
+        image.src = source;
+        await image.decode();
+
+        const maxDimension = 1400;
+        const scale = Math.min(1, maxDimension / Math.max(image.width, image.height));
+        const width = Math.max(1, Math.round(image.width * scale));
+        const height = Math.max(1, Math.round(image.height * scale));
+
+        canvas.width = width;
+        canvas.height = height;
+        canvas.getContext('2d').drawImage(image, 0, 0, width, height);
+
+        return canvas.toDataURL(mimeType, quality);
+    }
+
     async function startCamera() {
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
@@ -177,8 +195,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (file) {
             const reader = new FileReader();
             reader.onload = async (event) => {
-                const imageData = event.target.result;
-                document.getElementById('passport_image').value = imageData;
+                const imageData = await optimizeImage(event.target.result);
+                passportImageInput.value = imageData;
                 processKYC(imageData);
             };
             reader.readAsDataURL(file);
@@ -215,8 +233,8 @@ document.addEventListener('DOMContentLoaded', () => {
         canvas.height = video.videoHeight;
         canvas.getContext('2d').drawImage(video, 0, 0);
         
-        const imageData = canvas.toDataURL('image/png');
-        document.getElementById('passport_image').value = imageData;
+        const imageData = await optimizeImage(canvas.toDataURL('image/png'));
+        passportImageInput.value = imageData;
         processKYC(imageData);
     });
 });

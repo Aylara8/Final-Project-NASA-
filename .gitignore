@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyd
+*.so
+.python-version
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Editors
+.vscode/
+.idea/
+
+# Local app data
+instance/*.db
+instance/*.sqlite3
+*.db
+*.sqlite3
+
+# Uploads and generated assets
+static/uploads/
+uploads/
+
+# OS files
+.DS_Store
+Thumbs.db
