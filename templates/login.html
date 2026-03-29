@@ -30,7 +30,7 @@
             <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
                 <input type="checkbox"> Remember me
             </label>
-            <a href="#" style="color: var(--accent); font-weight: 600;">Forgot password?</a>
+            <a href="{{ url_for('forgot_password') }}" style="color: var(--accent); font-weight: 600;">Forgot password?</a>
         </div>
 
         <button type="submit" class="auth-btn" style="padding: 16px; font-size: 1.1rem; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);">

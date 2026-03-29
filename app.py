@@ -56,6 +56,54 @@ def has_accepted_chat_between(user_a_id, user_b_id):
     ).first()
 
 
+def find_pending_chat_request(sender_id, recipient_id):
+    return ChatRequest.query.filter_by(
+        sender_id=sender_id,
+        recipient_id=recipient_id,
+        status='pending'
+    ).order_by(ChatRequest.timestamp.desc()).first()
+
+
+def get_chat_connection_state(user_a_id, user_b_id):
+    accepted = has_accepted_chat_between(user_a_id, user_b_id)
+    if accepted:
+        return 'accepted', accepted
+
+    outgoing_pending = find_pending_chat_request(user_a_id, user_b_id)
+    if outgoing_pending:
+        return 'outgoing_pending', outgoing_pending
+
+    incoming_pending = find_pending_chat_request(user_b_id, user_a_id)
+    if incoming_pending:
+        return 'incoming_pending', incoming_pending
+
+    return 'none', None
+
+
+def normalize_profile_pic_url(image_url):
+    if not image_url:
+        return image_url
+
+    normalized = image_url.strip().replace("\\", "/")
+    if normalized.startswith("http://") or normalized.startswith("https://") or normalized.startswith("/static/"):
+        return normalized
+
+    static_index = normalized.lower().find("static/")
+    if static_index >= 0:
+        return "/" + normalized[static_index:]
+
+    if normalized.startswith("uploads/"):
+        return url_for('static', filename=normalized)
+
+    return normalized
+
+
+def normalize_user_profile_pic(user):
+    if not user:
+        return
+    user.profile_pic = normalize_profile_pic_url(user.profile_pic)
+
+
 @app.errorhandler(RequestEntityTooLarge)
 def handle_request_too_large(_error):
     flash('The uploaded image is too large. Please use a smaller or compressed image.')
@@ -135,7 +183,9 @@ class BlockedUser(db.Model):
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
+    user = User.query.get(int(user_id))
+    normalize_user_profile_pic(user)
+    return user
 
 # Initialize Database with dummy data
 with app.app_context():
@@ -256,6 +306,37 @@ def login():
         flash('Sign in below to switch to another account.')
     return render_template('login.html')
 
+
+@app.route('/forgot-password', methods=['GET', 'POST'])
+def forgot_password():
+    if request.method == 'POST':
+        email = (request.form.get('email') or '').strip().lower()
+        new_password = request.form.get('new_password') or ''
+        confirm_password = request.form.get('confirm_password') or ''
+
+        if not email:
+            flash('Email is required.')
+            return redirect(url_for('forgot_password'))
+        if len(new_password) < 6:
+            flash('New password must be at least 6 characters.')
+            return redirect(url_for('forgot_password'))
+        if new_password != confirm_password:
+            flash('Passwords do not match.')
+            return redirect(url_for('forgot_password'))
+
+        user = User.query.filter_by(email=email).first()
+        if not user:
+            flash('No account found with that email.')
+            return redirect(url_for('forgot_password'))
+
+        user.password_hash = generate_password_hash(new_password, method='scrypt')
+        db.session.commit()
+        flash('Password reset successful. Please sign in with your new password.')
+        return redirect(url_for('login'))
+
+    return render_template('forgot_password.html')
+
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -352,14 +433,19 @@ def upload():
 @app.route('/profile/<int:user_id>')
 def profile(user_id):
     user = User.query.get_or_404(user_id)
+    normalize_user_profile_pic(user)
     reviews = Review.query.filter_by(target_user_id=user_id).all()
+    for review in reviews:
+        normalize_user_profile_pic(review.reviewer)
+
     chat_request = None
     has_blocked_user = False
     blocked_by_user = False
     profile_pending_requests = []
 
     if current_user.is_authenticated:
-        chat_request = find_chat_request_between(current_user.id, user_id)
+        if current_user.id != user_id:
+            _, chat_request = get_chat_connection_state(current_user.id, user_id)
         has_blocked_user = BlockedUser.query.filter_by(blocker_id=current_user.id, blocked_id=user_id).first() is not None
         blocked_by_user = BlockedUser.query.filter_by(blocker_id=user_id, blocked_id=current_user.id).first() is not None
         if current_user.id == user_id:
@@ -367,6 +453,8 @@ def profile(user_id):
                 recipient_id=current_user.id,
                 status='pending'
             ).order_by(ChatRequest.timestamp.desc()).all()
+            for req in profile_pending_requests:
+                normalize_user_profile_pic(req.sender)
 
     return render_template(
         'profile.html',
@@ -382,9 +470,20 @@ def profile(user_id):
 @login_required
 def edit_profile():
     if request.method == 'POST':
-        current_user.full_name = request.form.get('full_name')
-        current_user.bio = request.form.get('bio')
-        current_user.region = request.form.get('region')
+        full_name = (request.form.get('full_name') or '').strip()
+        region = (request.form.get('region') or '').strip()
+        bio = (request.form.get('bio') or '').strip()
+
+        if not full_name:
+            flash('Full name is required.')
+            return redirect(url_for('edit_profile'))
+        if not region:
+            flash('Location is required.')
+            return redirect(url_for('edit_profile'))
+
+        current_user.full_name = full_name
+        current_user.bio = bio
+        current_user.region = region
         
         # Profile Picture
         file = request.files.get('profile_pic')
@@ -403,7 +502,8 @@ def edit_profile():
             file_path = os.path.join(app.config['UPLOAD_FOLDER_PROFILES'], filename)
             save_data_url_image(camera_image, file_path)
             current_user.profile_pic = url_for('static', filename=f'uploads/profiles/{filename}')
-            
+
+        normalize_user_profile_pic(current_user)
         db.session.commit()
         return redirect(url_for('profile', user_id=current_user.id))
     return render_template('edit_profile.html')
@@ -412,6 +512,8 @@ def edit_profile():
 @app.route('/send-chat-request/<int:recipient_id>')
 @login_required
 def send_chat_request(recipient_id):
+    User.query.get_or_404(recipient_id)
+
     if recipient_id == current_user.id:
         flash('You cannot chat-request yourself.')
         return redirect(url_for('profile', user_id=recipient_id))
@@ -423,40 +525,43 @@ def send_chat_request(recipient_id):
         flash('Chat request unavailable because one of you is blocked.')
         return redirect(url_for('profile', user_id=recipient_id))
 
-    existing = find_chat_request_between(current_user.id, recipient_id)
-    if not existing:
+    state, existing = get_chat_connection_state(current_user.id, recipient_id)
+    if state == 'none':
         req = ChatRequest(sender_id=current_user.id, recipient_id=recipient_id)
         db.session.add(req)
         db.session.commit()
         flash('Chat request sent!')
+    elif state == 'accepted':
+        flash('You already have an active chat with this user.')
+        return redirect(url_for('chat', recipient_id=recipient_id))
+    elif state == 'outgoing_pending':
+        flash('Chat request already exists.')
     else:
-        if existing.status == 'accepted':
-            flash('You already have an active chat with this user.')
-            return redirect(url_for('chat', recipient_id=recipient_id))
-        if existing.sender_id == current_user.id:
-            flash('Chat request already exists.')
-        else:
-            flash('This user already sent you a request. Open Messages to accept it.')
+        flash('This user already sent you a request. Open Messages to accept it.')
+        return redirect(url_for('chat', tab='requests'))
     return redirect(url_for('profile', user_id=recipient_id))
 
 @app.route('/accept-chat-request/<int:request_id>')
 @login_required
 def accept_chat_request(request_id):
     req = ChatRequest.query.get_or_404(request_id)
-    if req.recipient_id == current_user.id:
+    if req.recipient_id == current_user.id and req.status == 'pending':
         req.status = 'accepted'
         db.session.commit()
         return redirect(url_for('chat', recipient_id=req.sender_id))
+    flash('This chat request is no longer available.')
     return redirect(url_for('chat'))
 
 @app.route('/reject-chat-request/<int:request_id>')
 @login_required
 def reject_chat_request(request_id):
     req = ChatRequest.query.get_or_404(request_id)
-    if req.recipient_id == current_user.id:
+    if req.recipient_id == current_user.id and req.status == 'pending':
         req.status = 'rejected'
         db.session.delete(req)
         db.session.commit()
+    else:
+        flash('This chat request is no longer available.')
     return redirect(url_for('chat'))
 
 @app.route('/block-user/<int:user_id>')
@@ -495,41 +600,62 @@ def chat(recipient_id=None):
     accepted_requests = ChatRequest.query.filter(
         ((ChatRequest.sender_id == current_user.id) | (ChatRequest.recipient_id == current_user.id)) &
         (ChatRequest.status == 'accepted')
-    ).all()
+    ).order_by(ChatRequest.timestamp.desc()).all()
     
     active_chat_users = []
     seen_user_ids = set()
     for req in accepted_requests:
         other_user = req.recipient if req.sender_id == current_user.id else req.sender
         if other_user and other_user.id not in seen_user_ids:
+            normalize_user_profile_pic(other_user)
             active_chat_users.append(other_user)
             seen_user_ids.add(other_user.id)
-        
-    pending_requests = ChatRequest.query.filter_by(recipient_id=current_user.id, status='pending').all()
-    
+
+    pending_requests = ChatRequest.query.filter_by(
+        recipient_id=current_user.id,
+        status='pending'
+    ).order_by(ChatRequest.timestamp.desc()).all()
+    for req in pending_requests:
+        normalize_user_profile_pic(req.sender)
+
     messages = []
     active_recipient = None
+    initial_tab = request.args.get('tab', 'chats')
+    if initial_tab not in ('chats', 'requests'):
+        initial_tab = 'chats'
+
     if recipient_id:
-        # Verify they are in an accepted chat
-        is_authorized = ChatRequest.query.filter(
-            (
-                ((ChatRequest.sender_id == current_user.id) & (ChatRequest.recipient_id == recipient_id)) |
-                ((ChatRequest.sender_id == recipient_id) & (ChatRequest.recipient_id == current_user.id))
-            ) &
-            (ChatRequest.status == 'accepted')
-        ).first()
-        
-        if is_authorized:
+        state, _ = get_chat_connection_state(current_user.id, recipient_id)
+
+        if state == 'accepted':
             active_recipient = User.query.get_or_404(recipient_id)
+            normalize_user_profile_pic(active_recipient)
             messages = Message.query.filter(
                 ((Message.sender_id == current_user.id) & (Message.recipient_id == recipient_id)) |
                 ((Message.sender_id == recipient_id) & (Message.recipient_id == current_user.id))
             ).order_by(Message.timestamp.asc()).all()
-        else:
-            flash("You need an accepted chat request to message this user.")
+            initial_tab = 'chats'
+        elif state == 'incoming_pending':
+            flash("This user requested to chat with you. Accept it in Requests first.")
+            return redirect(url_for('chat', tab='requests'))
+        elif state == 'outgoing_pending':
+            flash("Your chat request is still pending approval.")
             return redirect(url_for('chat'))
+        else:
+            flash("Send a chat request first before messaging this user.")
+            return redirect(url_for('profile', user_id=recipient_id))
 
-    return render_template('chat.html', active_chat_users=active_chat_users, pending_requests=pending_requests, messages=messages, active_recipient=active_recipient)
+    if initial_tab == 'chats' and not active_recipient and pending_requests and not active_chat_users:
+        initial_tab = 'requests'
+
+    return render_template(
+        'chat.html',
+        active_chat_users=active_chat_users,
+        pending_requests=pending_requests,
+        messages=messages,
+        active_recipient=active_recipient,
+        initial_tab=initial_tab
+    )
 
 @app.route('/send_message', methods=['POST'])
 @login_required
@@ -543,9 +669,12 @@ def send_message():
         flash("Invalid message recipient.")
         return redirect(url_for('chat'))
     
-    # Check if blocked
-    if BlockedUser.query.filter_by(blocker_id=recipient_id, blocked_id=current_user.id).first():
-        flash("You are blocked by this user.")
+    # Check if either side has blocked the other.
+    if BlockedUser.query.filter(
+        ((BlockedUser.blocker_id == recipient_id) & (BlockedUser.blocked_id == current_user.id)) |
+        ((BlockedUser.blocker_id == current_user.id) & (BlockedUser.blocked_id == recipient_id))
+    ).first():
+        flash("Messaging is unavailable because one of you is blocked.")
         return redirect(url_for('chat'))
 
     if not has_accepted_chat_between(current_user.id, recipient_id):

@@ -6,8 +6,8 @@
 <div class="nav-container chat-page">
     <div class="chat-sidebar">
         <div class="chat-tabs">
-            <button onclick="switchTab('chats')" id="chats-tab-btn" class="chat-tab-btn active">Chats</button>
-            <button onclick="switchTab('requests')" id="requests-tab-btn" class="chat-tab-btn">
+            <button onclick="switchTab('chats')" id="chats-tab-btn" class="chat-tab-btn {% if initial_tab != 'requests' %}active{% endif %}">Chats</button>
+            <button onclick="switchTab('requests')" id="requests-tab-btn" class="chat-tab-btn {% if initial_tab == 'requests' %}active{% endif %}">
                 Requests
                 {% if pending_requests %}
                 <span class="chat-request-count">{{ pending_requests|length }}</span>
@@ -15,7 +15,7 @@
             </button>
         </div>
 
-        <div id="chats-list" class="chat-list">
+        <div id="chats-list" class="chat-list {% if initial_tab == 'requests' %}hidden{% endif %}">
             {% for user in active_chat_users %}
             <a href="{{ url_for('chat', recipient_id=user.id) }}" class="chat-list-item {% if active_recipient and active_recipient.id == user.id %}active{% endif %}">
                 <img src="{{ user.profile_pic or 'https://ui-avatars.com/api/?name=' + user.username }}" class="chat-avatar-lg">
@@ -32,7 +32,7 @@
             {% endfor %}
         </div>
 
-        <div id="requests-list" class="chat-list hidden">
+        <div id="requests-list" class="chat-list {% if initial_tab != 'requests' %}hidden{% endif %}">
             {% for req in pending_requests %}
             <div class="chat-request-card">
                 <div class="chat-request-user">

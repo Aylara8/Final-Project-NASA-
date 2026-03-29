@@ -24,7 +24,7 @@
                 <div class="profile-meta">
                     <h1>{{ user.full_name or user.username }}</h1>
                     <p class="profile-location">
-                        <i class="fas fa-map-marker-alt"></i> {{ user.region }} | Joined {{ user.items|length }} items
+                        <i class="fas fa-map-marker-alt"></i> {{ user.region or 'Unknown location' }} | {{ user.items|length }} listings
                     </p>
                     <div class="profile-badges">
                         <span class="profile-badge">
@@ -44,7 +44,7 @@
                             <span>Reviews</span>
                         </div>
                         <div class="profile-stat">
-                            <strong>{{ user.region }}</strong>
+                            <strong>{{ user.region or 'Unknown location' }}</strong>
                             <span>Region</span>
                         </div>
                     </div>

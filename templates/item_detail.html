@@ -36,7 +36,7 @@
                     <div style="font-size: 0.85rem; color: var(--text-secondary);"><i class="fas fa-star"></i> {{ "%.1f"|format(item.owner.rating) }} rating</div>
                 </div>
                 {% if current_user.is_authenticated and current_user.id != item.owner.id %}
-                <a href="{{ url_for('chat', recipient_id=item.owner.id) }}" style="margin-left: auto; background: var(--bg); border: 1px solid var(--border); padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 0.85rem;">Message</a>
+                <a href="{{ url_for('send_chat_request', recipient_id=item.owner.id) }}" style="margin-left: auto; background: var(--bg); border: 1px solid var(--border); padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 0.85rem;">Message</a>
                 {% endif %}
                 {% else %}
                 <div>
