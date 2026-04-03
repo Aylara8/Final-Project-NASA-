@@ -1,0 +1,17 @@
+{
+  "name": "HandShake App",
+  "short_name": "HandShake",
+  "description": "Платформа для рукопожатий и веб-сервис",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#013220",
+  "icons": [
+    {
+      "src": "/static/img/icon.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
