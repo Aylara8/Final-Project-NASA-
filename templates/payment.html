@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+
+{% block title %}HandShake | Secure Checkout{% endblock %}
+
+{% block content %}
+<div class="nav-container" style="max-width: 900px; margin: 40px auto; padding: 20px;">
+    <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 32px; align-items: start;">
+        
+        <!-- Left Column: Payment Details -->
+        <div style="background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 32px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+            <h2 style="font-size: 1.75rem; font-weight: 800; margin-bottom: 24px; display: flex; align-items: center; gap: 12px;">
+                <i class="fas fa-shield-alt" style="color: var(--accent);"></i> Secure Checkout
+            </h2>
+
+            <form action="{% if transaction_id %}{{ url_for('process_negotiated_payment', transaction_id=transaction_id) }}{% else %}{{ url_for('process_payment', item_id=item.id) }}{% endif %}" method="POST">
+                <input type="hidden" name="duration" value="{{ duration }}">
+                {% if transaction_id %}<input type="hidden" name="transaction_id" value="{{ transaction_id }}">{% endif %}
+                <div style="margin-bottom: 32px;">
+                    <label style="display: block; font-weight: 700; margin-bottom: 12px; font-size: 1rem;">Select Payment Method</label>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
+                        <label class="card-option" style="cursor: pointer; position: relative;">
+                            <input type="radio" name="card_type" value="Visa" checked style="position: absolute; opacity: 0;">
+                            <div class="card-box">
+                                <i class="fab fa-cc-visa" style="font-size: 2rem; color: #1a1f71;"></i>
+                                <span style="font-weight: 600; font-size: 0.8rem;">Visa</span>
+                            </div>
+                        </label>
+                        <label class="card-option" style="cursor: pointer; position: relative;">
+                            <input type="radio" name="card_type" value="MasterCard" style="position: absolute; opacity: 0;">
+                            <div class="card-box">
+                                <i class="fab fa-cc-mastercard" style="font-size: 2rem; color: #eb001b;"></i>
+                                <span style="font-weight: 600; font-size: 0.8rem;">MasterCard</span>
+                            </div>
+                        </label>
+                        <label class="card-option" style="cursor: pointer; position: relative;">
+                            <input type="radio" name="card_type" value="AltynAsyr" style="position: absolute; opacity: 0;">
+                            <div class="card-box">
+                                <i class="fas fa-credit-card" style="font-size: 2rem; color: #10b981;"></i>
+                                <span style="font-weight: 600; font-size: 0.8rem;">Altyn Asyr</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 20px; margin-bottom: 32px;">
+                    <div>
+                        <label style="display: block; font-size: 0.85rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 8px;">Cardholder Name</label>
+                        <input type="text" name="card_name" placeholder="Full Name on Card" required
+                               style="width: 100%; padding: 14px; background: var(--bg); border: 1px solid var(--border); border-radius: 12px; color: var(--text-primary); font-size: 1rem;">
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 0.85rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 8px;">Card Number</label>
+                        <div style="position: relative;">
+                            <input type="text" name="card_number" placeholder="4444 8888 1111 0000" required maxlength="19"
+                                   style="width: 100%; padding: 14px 14px 14px 50px; background: var(--bg); border: 1px solid var(--border); border-radius: 12px; color: var(--text-primary); font-size: 1.1rem; letter-spacing: 2px;">
+                            <i class="fas fa-credit-card" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-secondary);"></i>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 16px;">
+                        <div>
+                            <label style="display: block; font-size: 0.85rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 8px;">Expiration Date</label>
+                            <input type="text" name="expiry" placeholder="MM/YY" required maxlength="5"
+                                   style="width: 100%; padding: 14px; background: var(--bg); border: 1px solid var(--border); border-radius: 12px; color: var(--text-primary); font-size: 1rem;">
+                        </div>
+                        <div>
+                            <label style="display: block; font-size: 0.85rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 8px;">CVV/CVC</label>
+                            <input type="password" name="cvv" placeholder="***" required maxlength="4"
+                                   style="width: 100%; padding: 14px; background: var(--bg); border: 1px solid var(--border); border-radius: 12px; color: var(--text-primary); font-size: 1rem;">
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="auth-btn" 
+                        style="width: 100%; padding: 18px; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; gap: 12px; border-radius: 14px;"
+                        {% if current_user.wallet_balance < total_val %}disabled{% endif %}>
+                    {% if current_user.wallet_balance < total_val %}
+                        <i class="fas fa-exclamation-circle"></i> Insufficient Balance
+                    {% else %}
+                        <i class="fas fa-lock"></i> Pay {{ "%.2f"|format(total_val) }} TMT
+                    {% endif %}
+                </button>
+                
+                <p style="text-align: center; margin-top: 16px; font-size: 0.85rem; color: var(--text-secondary);">
+                    Your payment data is encrypted and secure.
+                </p>
+            </form>
+        </div>
+
+        <!-- Right Column: Order Summary -->
+        <div style="background: var(--bg); border: 1px solid var(--border); border-radius: 20px; padding: 24px; position: sticky; top: 40px;">
+            <h3 style="font-size: 1.2rem; font-weight: 800; margin-bottom: 20px;">Order Summary</h3>
+            
+            <div style="display: flex; gap: 16px; align-items: center; padding-bottom: 20px; border-bottom: 1px solid var(--border); margin-bottom: 20px;">
+                <img src="{{ item.image_url }}" style="width: 64px; height: 64px; object-fit: cover; border-radius: 10px; border: 1px solid var(--border);">
+                <div style="flex: 1;">
+                    <div style="font-weight: 700; font-size: 1rem; line-height: 1.2;">{{ item.title }}</div>
+                    <div style="color: var(--text-secondary); font-size: 0.8rem;">by {{ item.owner.username }}</div>
+                </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="color: var(--text-secondary);">Base Rent ({{ duration }} {{ 'hr' if item.price_unit == 'hour' else 'day' }}{{ 's' if duration > 1 else '' }})</span>
+                    <span style="font-weight: 600;">{{ "%.2f"|format(price_val) }} TMT</span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="color: var(--text-secondary);">HandShake Fee (5%)</span>
+                    <span style="font-weight: 600;">+ {{ "%.2f"|format(commission) }} TMT</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding: 10px; background: rgba(0,0,0,0.03); border-radius: 8px; border: 1px dashed var(--border);">
+                    <div>
+                        <span style="font-weight: 700; display: block;">Security Deposit</span>
+                        <small style="color: var(--text-secondary); font-size: 0.75rem;">Refundable upon return</small>
+                    </div>
+                    <span style="font-weight: 700;">+ {{ "%.2f"|format(deposit) }} TMT</span>
+                </div>
+                <div style="border-top: 2px dashed var(--border); margin-top: 12px; padding-top: 12px; display: flex; justify-content: space-between;">
+                    <span style="font-weight: 800; font-size: 1.1rem;">Total to Pay</span>
+                    <span style="font-weight: 800; font-size: 1.1rem; color: var(--accent);">{{ "%.2f"|format(total_val) }} TMT</span>
+                </div>
+            </div>
+
+            <div style="margin-top: 32px; padding: 16px; background: rgba(var(--accent-rgb, 99, 102, 241), 0.1); border-radius: 12px; border: 1px solid var(--accent);">
+                <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 4px;">YOUR WALLET</div>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-weight: 800; font-size: 1.2rem;">{{ "%.2f"|format(current_user.wallet_balance) }} TMT</span>
+                    <i class="fas fa-wallet" style="color: var(--accent);"></i>
+                </div>
+            </div>
+
+            <a href="{{ url_for('item_detail', item_id=item.id) }}" 
+               style="display: block; text-align: center; margin-top: 24px; color: var(--text-secondary); text-decoration: none; font-size: 0.9rem; font-weight: 600;">
+               <i class="fas fa-arrow-left"></i> Cancel and go back
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card-option input:checked + .card-box {
+        border-color: var(--accent);
+        background: rgba(var(--accent-rgb, 99, 102, 241), 0.05);
+        box-shadow: 0 0 0 2px var(--accent);
+    }
+    .card-box {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        padding: 16px;
+        border: 2px solid var(--border);
+        border-radius: 12px;
+        transition: all 0.2s ease;
+        background: var(--card-bg);
+    }
+    .card-box:hover {
+        border-color: var(--text-secondary);
+    }
+    .auth-btn:disabled {
+        background: #9ca3af;
+        cursor: not-allowed;
+        transform: none !important;
+    }
+</style>
+
+<script>
+    // Simple card number formatting
+    const cardInput = document.querySelector('input[name="card_number"]');
+    cardInput.addEventListener('input', (e) => {
+        let val = e.target.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+        let formatted = val.match(/.{1,4}/g);
+        if (formatted) {
+            e.target.value = formatted.join(' ');
+        }
+    });
+
+    // Expiry date formatting
+    const expiryInput = document.querySelector('input[name="expiry"]');
+    expiryInput.addEventListener('input', (e) => {
+        let val = e.target.value.replace(/\D/g, '');
+        if (val.length >= 2) {
+            e.target.value = val.slice(0, 2) + '/' + val.slice(2, 4);
+        }
+    });
+</script>
+{% endblock %}

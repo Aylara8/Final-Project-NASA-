@@ -40,7 +40,13 @@
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
             <div class="form-group">
                 <label style="font-weight: 700;">Price (TMT)</label>
-                <input type="number" name="price" placeholder="0" required>
+                <div style="display: flex; gap: 8px;">
+                    <input type="number" name="price" placeholder="0" required style="flex: 2;">
+                    <select name="price_unit" id="price-unit-select" style="flex: 1; {% if request.form.get('type') != 'rent' %}display: none;{% endif %}">
+                        <option value="day">/ day</option>
+                        <option value="hour">/ hr</option>
+                    </select>
+                </div>
             </div>
             <div class="form-group">
                 <label style="font-weight: 700;">Velayat / City</label>
@@ -165,6 +171,17 @@ document.addEventListener('DOMContentLoaded', () => {
             : 'Select neighborhood';
         populateSelect(neighborhoodSelect, neighborhoods, placeholderText);
     }
+
+    const typeSelect = document.querySelector('select[name="type"]');
+    const priceUnitSelect = document.getElementById('price-unit-select');
+
+    typeSelect.addEventListener('change', () => {
+        if (typeSelect.value === 'rent') {
+            priceUnitSelect.style.display = 'block';
+        } else {
+            priceUnitSelect.style.display = 'none';
+        }
+    });
 
     velayatSelect.addEventListener('change', syncDistricts);
     districtSelect.addEventListener('change', syncNeighborhoods);

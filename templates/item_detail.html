@@ -48,7 +48,7 @@
             </div>
             <div style="text-align: right;">
                 <div style="font-size: 1.5rem; font-weight: 800; color: var(--accent);">{{ item.price }} TMT</div>
-                <div style="color: var(--text-secondary); font-size: 0.9rem;">per {{ 'item' if item.type == 'sell' else 'day' }}</div>
+                <div style="color: var(--text-secondary); font-size: 0.9rem;">per {{ 'item' if item.type == 'sell' else ('hr' if item.price_unit == 'hour' else 'day') }}</div>
             </div>
         </div>
 
@@ -68,15 +68,62 @@
                     <div style="font-size: 0.85rem; color: var(--text-secondary);"><i class="fas fa-star"></i> {{ "%.1f"|format(item.owner.rating) }} rating</div>
                 </div>
                 {% if current_user.is_authenticated and current_user.id != item.owner.id %}
-                    {% if chat_state == 'accepted' %}
-                    <a href="{{ url_for('chat', recipient_id=item.owner.id) }}" style="margin-left: auto; background: var(--bg); border: 1px solid var(--border); padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 0.85rem;">Open Chat</a>
-                    {% elif chat_state == 'outgoing_pending' %}
-                    <a href="{{ url_for('profile', user_id=item.owner.id) }}" style="margin-left: auto; background: var(--bg); border: 1px solid var(--border); padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 0.85rem;">Request Pending</a>
-                    {% elif chat_state == 'incoming_pending' and chat_request %}
-                    <a href="{{ url_for('accept_chat_request', request_id=chat_request.id) }}" style="margin-left: auto; background: var(--bg); border: 1px solid var(--border); padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 0.85rem;">Accept Chat Request</a>
-                    {% else %}
-                    <a href="{{ url_for('send_chat_request', recipient_id=item.owner.id) }}" style="margin-left: auto; background: var(--bg); border: 1px solid var(--border); padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 0.85rem;">Request Chat</a>
-                    {% endif %}
+                    <div style="display: flex; flex-direction: column; gap: 8px; margin-left: auto; width: 220px;">
+                        {% if item.type == 'rent' %}
+                        <div style="margin-bottom: 4px;">
+                            <label style="font-size: 0.75rem; font-weight: 700; color: var(--text-secondary);">Duration ({{ 'hrs' if item.price_unit == 'hour' else 'days' }})</label>
+                            <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px;">
+                                <input type="number" id="rental-duration" value="1" min="1" max="100" style="width: 60px; padding: 6px; border-radius: 6px; border: 1px solid var(--border); background: var(--bg); color: var(--text-primary);">
+                                <span style="font-size: 0.85rem; font-weight: 700; color: var(--accent);">Total: <span id="dynamic-total">{{ item.price }}</span> TMT</span>
+                            </div>
+                        </div>
+                        <script>
+                            document.getElementById('rental-duration').addEventListener('input', function() {
+                                const price = parseFloat("{{ item.price }}");
+                                const duration = parseInt(this.value) || 1;
+                                document.getElementById('dynamic-total').innerText = (price * duration).toFixed(2);
+                                document.getElementById('buy-link').href = "{{ url_for('buy_item', item_id=item.id) }}?duration=" + duration;
+                            });
+                        </script>
+                        {% endif %}
+                        <a href="{{ url_for('buy_item', item_id=item.id) }}{% if item.type == 'rent' %}?duration=1{% endif %}" id="buy-link" style="background: var(--accent); color: white; border: none; padding: 10px 24px; border-radius: 8px; font-weight: 800; font-size: 0.95rem; text-align: center; text-decoration: none;">
+                            {% if item.type == 'rent' %}Rent Now{% else %}Buy Now{% endif %}
+                        </a>
+
+                        <button type="button" id="open-negotiate" style="background: var(--bg); border: 1px solid var(--border); padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; text-align: center; text-decoration: none; cursor: pointer;">
+                            <i class="fas fa-handshake"></i> Negotiate Price
+                        </button>
+
+                        <div id="negotiate-panel" style="display: none; margin-top: 10px; padding: 15px; border: 1px solid var(--border); border-radius: 12px; background: #f8fafc;">
+                            <form action="{{ url_for('negotiate', item_id=item.id) }}" method="POST">
+                                <label style="display: block; font-size: 0.75rem; font-weight: 700; margin-bottom: 4px;">Proposed Price (TMT)</label>
+                                <input type="number" step="0.01" name="proposed_price" value="{{ item.price }}" required style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid var(--border); margin-bottom: 10px;">
+                                <label style="display: block; font-size: 0.75rem; font-weight: 700; margin-bottom: 4px;">Duration ({{ 'hrs' if item.price_unit == 'hour' else 'days' }})</label>
+                                <input type="number" name="duration" id="negotiate-duration" value="1" min="1" required style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid var(--border); margin-bottom: 12px;">
+                                <button type="submit" class="auth-btn" style="width: 100%; font-size: 0.85rem; padding: 10px;">Send Offer</button>
+                            </form>
+                        </div>
+
+                        <script>
+                            document.getElementById('open-negotiate').addEventListener('click', function() {
+                                const panel = document.getElementById('negotiate-panel');
+                                panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+                                if (panel.style.display === 'block') {
+                                    document.getElementById('negotiate-duration').value = document.getElementById('rental-duration') ? document.getElementById('rental-duration').value : 1;
+                                }
+                            });
+                        </script>
+                        
+                        {% if chat_state == 'accepted' %}
+                        <a href="{{ url_for('chat', recipient_id=item.owner.id) }}" style="background: var(--bg); border: 1px solid var(--border); padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; text-align: center; text-decoration: none;">Open Chat</a>
+                        {% elif chat_state == 'outgoing_pending' %}
+                        <a href="{{ url_for('profile', user_id=item.owner.id) }}" style="background: var(--bg); border: 1px solid var(--border); padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; text-align: center; text-decoration: none;">Request Pending</a>
+                        {% elif chat_state == 'incoming_pending' and chat_request %}
+                        <a href="{{ url_for('accept_chat_request', request_id=chat_request.id) }}" style="background: var(--bg); border: 1px solid var(--border); padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; text-align: center; text-decoration: none;">Accept Chat Request</a>
+                        {% else %}
+                        <a href="{{ url_for('send_chat_request', recipient_id=item.owner.id) }}" style="background: var(--bg); border: 1px solid var(--border); padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; text-align: center; text-decoration: none;">Request Chat</a>
+                        {% endif %}
+                    </div>
                 {% endif %}
                 {% else %}
                 <div>

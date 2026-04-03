@@ -257,6 +257,11 @@ def ensure_location_schema():
         db.session.execute(text('ALTER TABLE item ADD COLUMN neighborhood_id INTEGER'))
         db.session.commit()
 
+    user_columns = {column['name'] for column in inspector.get_columns('user')}
+    if 'kyc_status' not in user_columns:
+        db.session.execute(text("ALTER TABLE user ADD COLUMN kyc_status VARCHAR(20) DEFAULT 'pending'"))
+        db.session.commit()
+
 
 def seed_location_data():
     for velayat_data in TURKMEN_LOCATION_DATA:
@@ -334,6 +339,7 @@ def rebuild_item_table_without_legacy_loc():
             id INTEGER NOT NULL PRIMARY KEY,
             title VARCHAR(200) NOT NULL,
             price VARCHAR(50) NOT NULL,
+            price_unit VARCHAR(20) DEFAULT "day",
             type VARCHAR(50) NOT NULL,
             description TEXT,
             image_url VARCHAR(500),
@@ -346,11 +352,11 @@ def rebuild_item_table_without_legacy_loc():
     """))
     db.session.execute(text("""
         INSERT INTO item_new (
-            id, title, price, type, description, image_url,
+            id, title, price, price_unit, type, description, image_url,
             category, rating, num_ratings, user_id, neighborhood_id
         )
         SELECT
-            id, title, price, type, description, image_url,
+            id, title, price, "day", type, description, image_url,
             category, rating, num_ratings, user_id, neighborhood_id
         FROM item
     """))
@@ -360,8 +366,21 @@ def rebuild_item_table_without_legacy_loc():
     db.session.commit()
 
 
+def update_rent_duration_schema():
+    inspector = inspect(db.engine)
+    item_columns = {column['name'] for column in inspector.get_columns('item')}
+    if 'price_unit' not in item_columns:
+        db.session.execute(text('ALTER TABLE item ADD COLUMN price_unit VARCHAR(20) DEFAULT "day"'))
+        db.session.commit()
+    
+    transaction_columns = {column['name'] for column in inspector.get_columns('transaction')}
+    if 'duration' not in transaction_columns:
+        db.session.execute(text('ALTER TABLE "transaction" ADD COLUMN duration INTEGER DEFAULT 1'))
+        db.session.commit()
+
 def apply_database_updates():
     db.create_all()
+    update_rent_duration_schema()
     ensure_location_schema()
     seed_location_data()
     backfill_item_locations()
@@ -434,6 +453,8 @@ class User(UserMixin, db.Model):
     num_ratings = db.Column(db.Integer, default=1)
     passport_img = db.Column(db.String(200), nullable=False)
     profile_pic = db.Column(db.String(500), nullable=True)
+    kyc_status = db.Column(db.String(20), default='pending') # pending, processing, verified, rejected
+    wallet_balance = db.Column(db.Float, default=1000.0) # Mock money for transactions
     items = db.relationship('Item', backref='owner', lazy=True)
     sent_messages = db.relationship('Message', foreign_keys='Message.sender_id', backref='sender', lazy=True)
     received_messages = db.relationship('Message', foreign_keys='Message.recipient_id', backref='recipient', lazy=True)
@@ -442,12 +463,15 @@ class Item(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
     price = db.Column(db.String(50), nullable=False)
-    type = db.Column(db.String(50), nullable=False)
+    price_unit = db.Column(db.String(20), default='day') # 'hour' or 'day'
+    deposit_price = db.Column(db.Float, default=0.0) # Added for theft protection
+    type = db.Column(db.String(50), nullable=False) # 'rent' or 'sell'
     description = db.Column(db.Text, nullable=True)
     image_url = db.Column(db.String(500), nullable=True)
     category = db.Column(db.String(100), nullable=False)
     rating = db.Column(db.Float, default=5.0)
     num_ratings = db.Column(db.Integer, default=1)
+    is_available = db.Column(db.Boolean, default=True) # Added to track active rentals
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
     neighborhood_id = db.Column(db.Integer, db.ForeignKey('neighborhood.id'), nullable=True)
 
@@ -456,6 +480,23 @@ class Item(db.Model):
         if self.neighborhood:
             return self.neighborhood.full_path
         return "Ashgabat"
+
+class Transaction(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    buyer_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    seller_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    item_id = db.Column(db.Integer, db.ForeignKey('item.id'), nullable=False)
+    amount = db.Column(db.Float, nullable=False)
+    commission = db.Column(db.Float, default=0.0)
+    deposit_amount = db.Column(db.Float, default=0.0) # Escrowed deposit
+    total_amount = db.Column(db.Float, nullable=False)
+    duration = db.Column(db.Integer, default=1) # Number of hours/days
+    status = db.Column(db.String(20), default='active') # active, completed, disputed, returned
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+    buyer = db.relationship('User', foreign_keys=[buyer_id], backref='purchases')
+    seller = db.relationship('User', foreign_keys=[seller_id], backref='sales')
+    item = db.relationship('Item', backref='transactions')
 
 class Review(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -649,15 +690,6 @@ def index():
 def search():
     return render_marketplace()
 
-@app.route('/process-passport', methods=['POST'])
-def process_passport():
-    data = request.get_json()
-    image_data = data.get('image')
-    if not image_data:
-        return jsonify({'error': 'No image data provided'}), 400
-    return jsonify({'full_name': "NEPES TAYYAROW", 'age': 25})
-
-
 @app.route('/api/expert', methods=['POST'])
 def expert_api():
     payload = request.get_json(silent=True) or {}
@@ -739,11 +771,19 @@ def register():
     if request.method == 'POST':
         email = (request.form.get('email') or "").strip().lower()
         region = (request.form.get('region') or "").strip()
+        full_name = (request.form.get('full_name') or "").strip()
+        age_value = request.form.get('age')
         password = request.form.get('password') or ""
         confirm_password = request.form.get('confirm_password') or ""
 
         if not region:
             flash('Please select your region.')
+            return redirect(url_for('register'))
+        if not full_name:
+            flash('Full name is required.')
+            return redirect(url_for('register'))
+        if not age_value or not age_value.isdigit():
+            flash('Valid age is required.')
             return redirect(url_for('register'))
         if not email:
             flash('Email is required.')
@@ -775,22 +815,23 @@ def register():
             flash('Invalid passport image. Please upload again.')
             return redirect(url_for('register'))
 
-        age_value = request.form.get('age')
-        parsed_age = int(age_value) if age_value and age_value.isdigit() else None
+        parsed_age = int(age_value)
         new_user = User(
             username=email.split("@")[0],
-            full_name=request.form.get('full_name') or email.split("@")[0],
+            full_name=full_name,
             email=email,
             password_hash=generate_password_hash(password, method='scrypt'),
             region=region,
             age=parsed_age,
-            passport_img=filename
+            passport_img=filename,
+            kyc_status='processing',
+            wallet_balance=1000.0 # Start with some mock money
         )
         db.session.add(new_user)
         db.session.commit()
         if current_user.is_authenticated:
             logout_user()
-        flash('Registration complete. You can now log in.')
+        flash('Registration complete. We sent your information to admin. Your KYC status is processing.')
         return redirect(url_for('login'))
     return render_template('register.html')
 
@@ -829,6 +870,7 @@ def upload():
             
         new_item = Item(
             title=request.form.get('title'), price=request.form.get('price'),
+            price_unit=request.form.get('price_unit', 'day'),
             type=request.form.get('type'), neighborhood_id=neighborhood.id,
             description=request.form.get('description'), image_url=image_url,
             category=request.form.get('category'), user_id=current_user.id
@@ -837,6 +879,224 @@ def upload():
         db.session.commit()
         return redirect(url_for('index'))
     return render_template('upload.html', location_tree=get_location_tree())
+
+def parse_price(price_str):
+    if not price_str:
+        return 0.0
+    import re
+    cleaned = re.sub(r'[^\d.]', '', price_str)
+    try:
+        return float(cleaned)
+    except ValueError:
+        return 0.0
+
+@app.route('/buy/<int:item_id>')
+@login_required
+def buy_item(item_id):
+    item = Item.query.get_or_404(item_id)
+    duration = request.args.get('duration', 1, type=int)
+    
+    if item.user_id == current_user.id:
+        flash("You cannot rent/buy your own item!")
+        return redirect(url_for('item_detail', item_id=item_id))
+
+    if not item.is_available:
+        flash("This item is currently rented out.")
+        return redirect(url_for('item_detail', item_id=item_id))
+
+    price_val = parse_price(item.price)
+    rental_total = price_val * duration if item.type == 'rent' else price_val
+    commission = rental_total * 0.05
+    deposit = item.deposit_price or (rental_total * 2 if item.type == 'rent' else 0)
+    total_val = rental_total + commission + deposit
+
+    # Create a pending negotiation at the listed price
+    new_tx = Transaction(
+        buyer_id=current_user.id,
+        seller_id=item.user_id,
+        item_id=item.id,
+        amount=price_val,
+        duration=duration,
+        status='negotiating',
+        commission=commission,
+        deposit_amount=deposit,
+        total_amount=total_val
+    )
+    db.session.add(new_tx)
+    db.session.commit()
+    flash("Rental request sent to the owner! Wait for their approval and meet to scan the QR code.")
+    return redirect(url_for('profile', user_id=current_user.id))
+
+@app.route('/negotiate/<int:item_id>', methods=['POST'])
+@login_required
+def negotiate(item_id):
+    item = Item.query.get_or_404(item_id)
+    if item.user_id == current_user.id:
+        flash("You cannot negotiate with yourself!")
+        return redirect(url_for('item_detail', item_id=item_id))
+
+    duration = request.form.get('duration', 1, type=int)
+    proposed_price = request.form.get('proposed_price', type=float)
+
+    if not proposed_price:
+        flash("Please enter a proposed price.")
+        return redirect(url_for('item_detail', item_id=item_id))
+
+    rental_total = proposed_price * duration if item.type == 'rent' else proposed_price
+    commission = rental_total * 0.05
+    deposit = item.deposit_price or (rental_total * 2 if item.type == 'rent' else 0)
+    total_val = rental_total + commission + deposit
+
+    # Create a pending negotiation
+    new_tx = Transaction(
+        buyer_id=current_user.id,
+        seller_id=item.user_id,
+        item_id=item.id,
+        amount=proposed_price,
+        duration=duration,
+        status='negotiating',
+        commission=commission,
+        deposit_amount=deposit,
+        total_amount=total_val
+    )
+    db.session.add(new_tx)
+    db.session.commit()
+    flash("Negotiation request sent to the owner!")
+    return redirect(url_for('profile', user_id=current_user.id))
+
+@app.route('/accept_negotiation/<int:transaction_id>')
+@login_required
+def accept_negotiation(transaction_id):
+    tx = Transaction.query.get_or_404(transaction_id)
+    if tx.seller_id != current_user.id:
+        flash("Unauthorized.")
+        return redirect(url_for('profile', user_id=current_user.id))
+
+    tx.status = 'accepted'
+    db.session.commit()
+    flash("Deal accepted! Show the QR code to the renter when you meet.")
+    return redirect(url_for('profile', user_id=current_user.id))
+
+@app.route('/decline_negotiation/<int:transaction_id>')
+@login_required
+def decline_negotiation(transaction_id):
+    tx = Transaction.query.get_or_404(transaction_id)
+    if tx.seller_id != current_user.id and tx.buyer_id != current_user.id:
+        flash("Unauthorized.")
+        return redirect(url_for('profile', user_id=current_user.id))
+
+    db.session.delete(tx)
+    db.session.commit()
+    flash("Negotiation cancelled.")
+    return redirect(url_for('profile', user_id=current_user.id))
+
+@app.route('/confirm_deal/<int:transaction_id>')
+@login_required
+def confirm_deal(transaction_id):
+    tx = Transaction.query.get_or_404(transaction_id)
+    if tx.buyer_id != current_user.id:
+        flash("Only the renter can confirm the hand-off.")
+        return redirect(url_for('index'))
+    
+    if tx.status != 'accepted':
+        flash("This deal is not ready for confirmation.")
+        return redirect(url_for('profile', user_id=current_user.id))
+
+    # Calculate final amounts based on negotiated price
+    price_val = tx.amount
+    
+    # SECURITY: Prevent unverified users from renting expensive items
+    if price_val > 100 and current_user.kyc_status != 'verified':
+        flash("You must be a verified user to rent high-value items. Please wait for admin approval.")
+        return redirect(url_for('profile', user_id=current_user.id))
+
+    duration = tx.duration
+    rental_total = price_val * duration if tx.item.type == 'rent' else price_val
+    commission = rental_total * 0.05
+    deposit = tx.item.deposit_price or (rental_total * 2 if tx.item.type == 'rent' else 0)
+    total_val = rental_total + commission + deposit
+    
+    return render_template('payment.html', item=tx.item, price_val=rental_total, commission=commission, deposit=deposit, total_val=total_val, duration=duration, transaction_id=tx.id)
+
+@app.route('/process_negotiated_payment/<int:transaction_id>', methods=['POST'])
+@login_required
+def process_negotiated_payment(transaction_id):
+    tx = Transaction.query.get_or_404(transaction_id)
+    if tx.buyer_id != current_user.id:
+        flash("Unauthorized.")
+        return redirect(url_for('index'))
+
+    # Recalculate to be sure
+    price_val = tx.amount
+    duration = tx.duration
+    rental_total = price_val * duration if tx.item.type == 'rent' else price_val
+    commission = rental_total * 0.05
+    deposit = tx.item.deposit_price or (rental_total * 2 if tx.item.type == 'rent' else 0)
+    total_val = rental_total + commission + deposit
+
+    if current_user.wallet_balance < total_val:
+        flash("Insufficient funds!")
+        return redirect(url_for('confirm_deal', transaction_id=tx.id))
+
+    try:
+        current_user.wallet_balance -= total_val
+        seller = User.query.get(tx.seller_id)
+        if seller:
+            seller.wallet_balance += rental_total
+
+        tx.item.is_available = False
+        
+        # Cancel all other pending/accepted negotiations for this item
+        Transaction.query.filter(
+            Transaction.item_id == tx.item_id,
+            Transaction.id != tx.id,
+            Transaction.status.in_(['negotiating', 'accepted'])
+        ).delete()
+
+        tx.commission = commission
+        tx.deposit_amount = deposit
+        tx.total_amount = total_val
+        tx.status = 'active'
+        tx.timestamp = datetime.utcnow()
+        db.session.commit()
+
+        flash("Payment successful! HandShake is holding the deposit. Rental started!")
+        return redirect(url_for('profile', user_id=current_user.id))
+    except Exception as e:
+        db.session.rollback()
+        flash("Transaction failed.")
+        return redirect(url_for('confirm_deal', transaction_id=tx.id))
+
+
+@app.route('/return_item/<int:transaction_id>')
+@login_required
+def return_item(transaction_id):
+    # This route is used by the SELLER to confirm they got their item back
+    tx = Transaction.query.get_or_404(transaction_id)
+    if tx.seller_id != current_user.id:
+        flash("Only the owner can confirm return.")
+        return redirect(url_for('dashboard'))
+    
+    if tx.status != 'active':
+        flash("Invalid action.")
+        return redirect(url_for('dashboard'))
+
+    try:
+        # Return Deposit to Buyer
+        buyer = User.query.get(tx.buyer_id)
+        buyer.wallet_balance += tx.deposit_amount
+        
+        # Mark Item as available
+        item = Item.query.get(tx.item_id)
+        item.is_available = True
+        
+        tx.status = 'returned'
+        db.session.commit()
+        flash("Item return confirmed! Security deposit released back to the renter.")
+    except:
+        db.session.rollback()
+        flash("Error processing return.")
+    return redirect(url_for('dashboard'))
 
 @app.route('/profile/<int:user_id>')
 def profile(user_id):

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}HandShake | Advanced KYC Registration{% endblock %}
+{% block title %}HandShake | KYC Registration{% endblock %}
 
 {% block content %}
 <div class="auth-container" style="max-width: 550px;">
@@ -13,6 +13,8 @@
             <div class="step step-3">3</div>
             <div class="step-line"></div>
             <div class="step step-4">4</div>
+            <div class="step-line"></div>
+            <div class="step step-5">5</div>
         </div>
         <h2 id="step-title">Select Your Region</h2>
         <p id="step-desc" style="color: var(--text-secondary); margin-bottom: 24px;">Choose the country where your passport was issued.</p>
@@ -55,33 +57,55 @@
             </div>
 
             <div style="background: #f9fafb; padding: 15px; border-radius: 12px; font-size: 0.8rem; border-left: 4px solid var(--accent);">
-                <p><strong><i class="fas fa-globe"></i> International Standard:</strong> Our AI recognizes passport designs from over 190 countries, including biometric and machine-readable zones (MRZ).</p>
+                <p><strong><i class="fas fa-shield-alt"></i> Manual Verification:</strong> Please provide a clear photo of your passport. Our administrators will verify your identity manually.</p>
             </div>
 
             <div id="processing-msg" style="display: none; margin-top: 10px; text-align: center; color: var(--accent);">
-                <i class="fas fa-spinner fa-spin"></i> Processing KYC Data...
+                <i class="fas fa-spinner fa-spin"></i> Preparing document...
             </div>
             <input type="hidden" name="passport_image" id="passport_image">
         </div>
 
-        <!-- Step 3: Verification -->
+        <!-- Step 3: Personal Details -->
         <div class="form-step" id="step3" style="display: none;">
             <div class="form-group">
-                <label style="font-size: 0.8rem; font-weight: 700;">Extracted Full Name</label>
-                <input type="text" name="full_name" id="full_name" placeholder="Full Name" readonly style="background: #f9fafb;">
+                <label style="font-size: 0.8rem; font-weight: 700;">Full Name (as in passport)</label>
+                <input type="text" name="full_name" id="full_name" placeholder="Full Name">
             </div>
             <div class="form-group">
-                <label style="font-size: 0.8rem; font-weight: 700;">Calculated Age</label>
-                <input type="number" name="age" id="age" placeholder="Age" readonly style="background: #f9fafb;">
+                <label style="font-size: 0.8rem; font-weight: 700;">Age</label>
+                <input type="number" name="age" id="age" placeholder="Age">
             </div>
             <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: -10px; margin-bottom: 20px;">
-                <i class="fas fa-info-circle"></i> Info extracted automatically from your passport.
+                <i class="fas fa-info-circle"></i> Please ensure the information matches your uploaded passport exactly.
             </p>
             <button type="button" class="auth-btn next-btn">Confirm Details</button>
         </div>
 
-        <!-- Step 4: Account Details -->
+        <!-- Step 4: Rental Contract -->
         <div class="form-step" id="step4" style="display: none;">
+            <div style="background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 20px; height: 200px; overflow-y: scroll; margin-bottom: 20px; font-size: 0.85rem; line-height: 1.6; color: var(--text-secondary);">
+                <h4 style="color: var(--text-main); margin-top: 0;">HandShake Rental Agreement</h4>
+                <p>By using HandShake, you agree to the following terms:</p>
+                <ol>
+                    <li><strong>Item Condition:</strong> You must return items in the same condition as received.</li>
+                    <li><strong>Late Fees:</strong> A late fee of 15% per day will be applied to delayed returns.</li>
+                    <li><strong>Damages:</strong> You are fully responsible for any damages incurred during the rental period.</li>
+                    <li><strong>Verification:</strong> You confirm that all identity documents provided are genuine.</li>
+                </ol>
+                <p>Failure to comply with these rules will result in immediate account suspension and potential legal action.</p>
+            </div>
+
+            <div class="form-group">
+                <label style="font-size: 0.8rem; font-weight: 700;">Verification Question: What is the late fee percentage mentioned above?</label>
+                <input type="text" id="contract-answer" placeholder="Type the percentage (e.g. 50%)" style="border: 2px solid var(--border);">
+            </div>
+            
+            <button type="button" class="auth-btn next-btn">Accept & Sign</button>
+        </div>
+
+        <!-- Step 5: Account Details -->
+        <div class="form-step" id="step5" style="display: none;">
             <div class="form-group">
                 <input type="email" name="email" placeholder="Email Address" required>
             </div>
@@ -103,14 +127,14 @@
 <style>
 .step-indicator { align-items: center; }
 .step { 
-    width: 32px; height: 32px; border-radius: 50%; 
+    width: 28px; height: 28px; border-radius: 50%; 
     background: #e5e7eb; color: #6b7280; 
     display: flex; align-items: center; justify-content: center; 
-    font-weight: 700; font-size: 0.875rem;
+    font-weight: 700; font-size: 0.75rem;
 }
 .step.active { background: var(--accent); color: white; }
 .step.completed { background: #10b981; color: white; }
-.step-line { flex: 1; height: 2px; background: #e5e7eb; margin: 0 10px; }
+.step-line { flex: 1; height: 2px; background: #e5e7eb; margin: 0 5px; }
 .step-line.active { background: var(--accent); }
 </style>
 
@@ -126,12 +150,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const passportFile = document.getElementById('passport-file');
     const passportImageInput = document.getElementById('passport_image');
 
-    // Step Titles & Descriptions
     const stepData = {
         1: ["Select Your Region", "Choose the country where your passport was issued."],
         2: ["Passport KYC", "Take a clear photo of your passport's main page."],
-        3: ["Verify Details", "Confirm the information extracted from your document."],
-        4: ["Create Account", "Set your login credentials to finish."]
+        3: ["Personal Details", "Enter the information as it appears on your document."],
+        4: ["Legal Agreement", "Please read the rental contract carefully."],
+        5: ["Create Account", "Set your login credentials to finish."]
     };
 
     function updateStepUI() {
@@ -142,7 +166,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('step-title').innerText = title;
         document.getElementById('step-desc').innerText = desc;
         
-        // Update Indicators
         document.querySelectorAll('.step').forEach((s, idx) => {
             if (idx + 1 < currentStep) s.className = 'step completed';
             else if (idx + 1 === currentStep) s.className = 'step active';
@@ -150,6 +173,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         
         if(currentStep === 2) startCamera();
+        else if (video.srcObject) {
+            video.srcObject.getTracks().forEach(track => track.stop());
+        }
     }
 
     regionSelect.addEventListener('change', () => {
@@ -158,6 +184,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     nextBtns.forEach(btn => {
         btn.addEventListener('click', () => {
+            if (currentStep === 3) {
+                const fullName = document.getElementById('full_name').value;
+                const age = document.getElementById('age').value;
+                if (!fullName || !age) {
+                    alert("Please fill in all details.");
+                    return;
+                }
+            }
+            if (currentStep === 4) {
+                const answer = document.getElementById('contract-answer').value.trim();
+                if (answer !== '15%') {
+                    alert("Incorrect answer. Please read the contract carefully to find the late fee percentage.");
+                    return;
+                }
+            }
             currentStep++;
             updateStepUI();
         });
@@ -167,16 +208,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const image = new Image();
         image.src = source;
         await image.decode();
-
         const maxDimension = 1400;
         const scale = Math.min(1, maxDimension / Math.max(image.width, image.height));
         const width = Math.max(1, Math.round(image.width * scale));
         const height = Math.max(1, Math.round(image.height * scale));
-
         canvas.width = width;
         canvas.height = height;
         canvas.getContext('2d').drawImage(image, 0, 0, width, height);
-
         return canvas.toDataURL(mimeType, quality);
     }
 
@@ -184,10 +222,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
             video.srcObject = stream;
-        } catch (err) {
-            console.error("Camera error:", err);
-            // alert("Please enable camera access for KYC verification.");
-        }
+        } catch (err) { console.error("Camera error:", err); }
     }
 
     passportFile.addEventListener('change', (e) => {
@@ -197,45 +232,21 @@ document.addEventListener('DOMContentLoaded', () => {
             reader.onload = async (event) => {
                 const imageData = await optimizeImage(event.target.result);
                 passportImageInput.value = imageData;
-                processKYC(imageData);
+                currentStep = 3;
+                updateStepUI();
             };
             reader.readAsDataURL(file);
         }
     });
 
-    async function processKYC(imageData) {
-        processingMsg.style.display = 'block';
-        if (video.srcObject) {
-            video.srcObject.getTracks().forEach(track => track.stop());
-        }
-
-        try {
-            const response = await fetch('/process-passport', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ image: imageData })
-            });
-            const data = await response.json();
-            
-            document.getElementById('full_name').value = data.full_name;
-            document.getElementById('age').value = data.age;
-            
-            currentStep = 3;
-            updateStepUI();
-        } catch (err) {
-            alert("Error processing document. Please try again.");
-            processingMsg.style.display = 'none';
-        }
-    }
-
     captureBtn.addEventListener('click', async () => {
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
         canvas.getContext('2d').drawImage(video, 0, 0);
-        
         const imageData = await optimizeImage(canvas.toDataURL('image/png'));
         passportImageInput.value = imageData;
-        processKYC(imageData);
+        currentStep = 3;
+        updateStepUI();
     });
 });
 </script>

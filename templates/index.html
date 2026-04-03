@@ -126,7 +126,7 @@
             <h3>{{ item.title }}</h3>
             <p class="location">{{ item.location_label }}</p>
             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
-                <p class="price">{{ item.price }} TMT {% if item.type == 'rent' %}<span>/ day</span>{% endif %}</p>
+                <p class="price">{{ item.price }} TMT {% if item.type == 'rent' %}<span>/ {{ 'hr' if item.price_unit == 'hour' else 'day' }}</span>{% endif %}</p>
                 <span style="font-size: 0.8rem; color: var(--text-secondary);"><i class="fas fa-star" style="color: #f59e0b;"></i> {{ "%.1f"|format(item.rating) }}</span>
             </div>
         </div>
