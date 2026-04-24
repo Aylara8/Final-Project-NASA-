@@ -1,17 +1,16 @@
 {% extends "base.html" %}
 
-{% block title %}HandShake | Rent Anything, Anywhere{% endblock %}
+{% block title %}HandShake | {{ ui('dashboard.page_title') }}{% endblock %}
 
 {% block content %}
 <div class="hero-section" style="padding: 120px 0; text-align: center; background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, var(--bg) 100%);">
     <div class="nav-container">
         <h1 style="font-size: 4rem; font-weight: 800; letter-spacing: -2px; line-height: 1.1; margin-bottom: 24px; color: var(--text-primary);">
-            Rent everything. <br>
-            <span style="color: var(--accent);">One HandShake away.</span>
+            {{ ui('dashboard.hero_title') }} <br>
+            <span style="color: var(--accent);">{{ ui('dashboard.hero_accent') }}</span>
         </h1>
         <p style="font-size: 1.25rem; color: var(--text-secondary); max-width: 600px; margin: 0 auto 40px;">
-            The world's first secure, peer-to-peer rental platform for hobbies, cars, houses, and tools.
-            Built with KYC-verified security for total peace of mind.
+            {{ ui('dashboard.hero_text') }}
         </p>
     </div>
 </div>
@@ -21,29 +20,29 @@
         <!-- Verified KYC -->
         <div style="padding: 32px; border: 1px solid var(--border); border-radius: 24px; text-align: center; background: var(--card-bg);">
             <div style="font-size: 48px; color: var(--accent); margin-bottom: 24px;"><i class="fas fa-lock"></i></div>
-            <h3 style="font-weight: 800; margin-bottom: 16px; color: var(--text-primary);">Verified KYC</h3>
-            <p style="color: var(--text-secondary); font-size: 0.95rem;">Every member on HandShake is verified with a real passport scan, ensuring a safe community for all.</p>
+            <h3 style="font-weight: 800; margin-bottom: 16px; color: var(--text-primary);">{{ ui('dashboard.verified_title') }}</h3>
+            <p style="color: var(--text-secondary); font-size: 0.95rem;">{{ ui('dashboard.verified_text') }}</p>
         </div>
         
         <!-- Earn from Assets -->
         <div style="padding: 32px; border: 1px solid var(--border); border-radius: 24px; text-align: center; background: var(--card-bg);">
             <div style="font-size: 48px; color: var(--accent); margin-bottom: 24px;"><i class="fas fa-hand-holding-usd"></i></div>
-            <h3 style="font-weight: 800; margin-bottom: 16px; color: var(--text-primary);">Earn from Assets</h3>
-            <p style="color: var(--text-secondary); font-size: 0.95rem;">Turn your idle items like cameras, PS5s, or tools into a steady stream of passive income.</p>
+            <h3 style="font-weight: 800; margin-bottom: 16px; color: var(--text-primary);">{{ ui('dashboard.earn_title') }}</h3>
+            <p style="color: var(--text-secondary); font-size: 0.95rem;">{{ ui('dashboard.earn_text') }}</p>
         </div>
         
         <!-- Eco-Friendly -->
         <div style="padding: 32px; border: 1px solid var(--border); border-radius: 24px; text-align: center; background: var(--card-bg);">
             <div style="font-size: 48px; color: var(--accent); margin-bottom: 24px;"><i class="fas fa-globe-americas"></i></div>
-            <h3 style="font-weight: 800; margin-bottom: 16px; color: var(--text-primary);">Eco-Friendly</h3>
-            <p style="color: var(--text-secondary); font-size: 0.95rem;">By renting instead of buying, you help reduce electronic waste and promote a sustainable economy.</p>
+            <h3 style="font-weight: 800; margin-bottom: 16px; color: var(--text-primary);">{{ ui('dashboard.eco_title') }}</h3>
+            <p style="color: var(--text-secondary); font-size: 0.95rem;">{{ ui('dashboard.eco_text') }}</p>
         </div>
     </div>
 </div>
 
 <!-- Green Banner at the Bottom -->
 <div style="background: var(--accent); padding: 80px 0; color: white; text-align: center; margin-top: 40px;">
-    <h2 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 20px; color: white;">Safe. Secure. Sustainable.</h2>
-    <p style="margin-bottom: 0; font-size: 1.1rem; opacity: 0.9; color: white;">The future of sharing is here.</p>
+    <h2 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 20px; color: white;">{{ ui('dashboard.banner_title') }}</h2>
+    <p style="margin-bottom: 0; font-size: 1.1rem; opacity: 0.9; color: white;">{{ ui('dashboard.banner_text') }}</p>
 </div>
 {% endblock %}

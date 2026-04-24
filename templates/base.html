@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="{{ current_locale }}" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -26,18 +26,21 @@
                 <a href="/">Hand<span>Shake</span></a>
             </div>
 
-            <div class="search-bar-container">
-                {% set is_market_search = request.endpoint in ['index', 'search'] %}
-                {% if not is_market_search %}
-                <form action="/search" method="GET" class="search-bar">
-                    <input type="text" name="q" class="search-input-minimal" placeholder="{{ t('nav.search_placeholder') }}" value="{{ request.args.get('q', '') }}">
-                    <button type="submit" class="search-icon-btn"><i class="fas fa-search"></i></button>
-                </form>
-                {% endif %}
-            </div>
-
             <div class="nav-actions">
-                <a href="/market" class="post-link">{{ t('nav.marketplace') }}</a>
+                {% set is_market_search = request.endpoint in ['index', 'search'] %}
+                <div class="nav-market-tools">
+                    <form action="/search" method="GET" class="search-bar nav-inline-search">
+                        <input type="text" name="q" class="search-input-minimal" placeholder="{{ t('nav.search_placeholder') }}" value="{{ request.args.get('q', '') }}">
+                        <button type="submit" class="search-icon-btn"><i class="fas fa-search"></i></button>
+                    </form>
+                    {% if is_market_search %}
+                    <button type="button" id="market-filter-toggle" class="market-filter-toggle nav-filter-toggle" aria-expanded="false" aria-controls="market-filter-body" title="{{ ui('market.filters') }}">
+                        <i class="fas fa-sliders-h"></i>
+                        <span>{{ ui('market.filters') }}</span>
+                    </button>
+                    {% endif %}
+                    <a href="/market" class="post-link nav-market-link">{{ t('nav.marketplace') }}</a>
+                </div>
                 <a href="{% if pending_chat_request_count %}{{ url_for('chat', tab='requests') }}{% else %}/chat{% endif %}" class="icon-btn nav-chat-link" title="{{ t('nav.messages') }}">
                     <i class="fas fa-comments"></i>
                     {% if pending_chat_request_count %}

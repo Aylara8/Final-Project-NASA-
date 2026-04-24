@@ -243,6 +243,337 @@ TRANSLATIONS = {
     },
 }
 
+LOCALIZED_UI = {
+    'dashboard.page_title': {'en': 'Home', 'tm': 'Baş sahypa', 'ru': 'Главная'},
+    'dashboard.hero_title': {'en': 'Rent everything.', 'tm': 'Islendik zady kärendesine al.', 'ru': 'Арендуйте что угодно.'},
+    'dashboard.hero_accent': {'en': 'One HandShake away.', 'tm': 'Bir HandShake aralykda.', 'ru': 'Всего в одном HandShake.'},
+    'dashboard.hero_text': {
+        'en': 'A secure peer-to-peer rental platform for hobbies, cars, homes, and tools with KYC-backed trust.',
+        'tm': 'Hobbi, ulag, ýaşaýyş jaýy we gurallar üçin KYC bilen güýçlendirilen ynamly, howpsuz kärende platformasy.',
+        'ru': 'Безопасная P2P-платформа аренды для хобби, авто, жилья и инструментов с проверкой KYC.',
+    },
+    'dashboard.verified_title': {'en': 'Verified KYC', 'tm': 'Tassyklanan KYC', 'ru': 'Проверенный KYC'},
+    'dashboard.verified_text': {
+        'en': 'Every member is verified with identity documents to keep the community safer.',
+        'tm': 'Jemgyýeti has howpsuz etmek üçin her ulanyjynyň şahsyýeti resminamalar arkaly barlanýar.',
+        'ru': 'Каждый пользователь проходит проверку документов, чтобы сообщество было безопаснее.',
+    },
+    'dashboard.earn_title': {'en': 'Earn from Assets', 'tm': 'Emläkden girdeji al', 'ru': 'Зарабатывайте на активах'},
+    'dashboard.earn_text': {
+        'en': 'Turn idle items like cameras, consoles, or tools into extra income.',
+        'tm': 'Boş duran kameraňyzy, konsolyňyzy ýa-da gurallaryňyzy goşmaça girdejä öwüriň.',
+        'ru': 'Превратите простаивающие камеры, консоли и инструменты в дополнительный доход.',
+    },
+    'dashboard.eco_title': {'en': 'Eco-Friendly', 'tm': 'Ekologiýa taýdan peýdaly', 'ru': 'Экологично'},
+    'dashboard.eco_text': {
+        'en': 'Renting instead of buying reduces waste and supports a more sustainable economy.',
+        'tm': 'Satyn almagyň ýerine kärendesine almak galyndylary azaldýar we durnukly ykdysadyýeti goldaýar.',
+        'ru': 'Аренда вместо покупки сокращает отходы и поддерживает устойчивую экономику.',
+    },
+    'dashboard.banner_title': {'en': 'Safe. Secure. Sustainable.', 'tm': 'Howpsuz. Ynamly. Durnukly.', 'ru': 'Безопасно. Надежно. Устойчиво.'},
+    'dashboard.banner_text': {'en': 'The future of sharing is here.', 'tm': 'Paýlaşmagyň geljegi şu ýerde.', 'ru': 'Будущее совместного пользования уже здесь.'},
+    'upload.page_title': {'en': 'Post Item', 'tm': 'Haryt goş', 'ru': 'Добавить товар'},
+    'upload.title': {'en': 'List your item', 'tm': 'Harydyňyzy ýerleşdiriň', 'ru': 'Разместите свой товар'},
+    'upload.subtitle': {'en': 'Fill in the details to start renting.', 'tm': 'Kärendä bermek üçin maglumatlary dolduryň.', 'ru': 'Заполните данные, чтобы начать сдавать в аренду.'},
+    'upload.what_listing': {'en': 'What are you listing?', 'tm': 'Näme ýerleşdirýärsiňiz?', 'ru': 'Что вы размещаете?'},
+    'upload.title_placeholder': {'en': 'e.g. PlayStation 5, Canon EOS R5', 'tm': 'mysal üçin: PlayStation 5, Canon EOS R5', 'ru': 'например: PlayStation 5, Canon EOS R5'},
+    'upload.category': {'en': 'Category', 'tm': 'Kategoriýa', 'ru': 'Категория'},
+    'upload.type': {'en': 'Type', 'tm': 'Görnüşi', 'ru': 'Тип'},
+    'upload.price': {'en': 'Price (TMT)', 'tm': 'Baha (TMT)', 'ru': 'Цена (TMT)'},
+    'upload.velayat_city': {'en': 'Velayat / City', 'tm': 'Welaýat / şäher', 'ru': 'Велаят / город'},
+    'upload.select_velayat': {'en': 'Select velayat', 'tm': 'Welaýaty saýlaň', 'ru': 'Выберите велаят'},
+    'upload.district': {'en': 'District', 'tm': 'Etrap', 'ru': 'Этрап'},
+    'upload.select_district': {'en': 'Select district', 'tm': 'Etraby saýlaň', 'ru': 'Выберите этрап'},
+    'upload.neighborhood': {'en': 'Neighborhood / Street', 'tm': 'Ýer / köçe', 'ru': 'Район / улица'},
+    'upload.select_neighborhood': {'en': 'Select neighborhood or street', 'tm': 'Ýeri ýa-da köçäni saýlaň', 'ru': 'Выберите район или улицу'},
+    'upload.select_street': {'en': 'Select street or avenue', 'tm': 'Köçäni ýa-da şaýoly saýlaň', 'ru': 'Выберите улицу или проспект'},
+    'upload.description': {'en': 'Description', 'tm': 'Düşündiriş', 'ru': 'Описание'},
+    'upload.description_placeholder': {'en': 'Tell us more about the item...', 'tm': 'Haryt barada giňişleýin ýazyň...', 'ru': 'Расскажите подробнее о товаре...'},
+    'upload.photo': {'en': 'Item Photo', 'tm': 'Harydyň suraty', 'ru': 'Фото товара'},
+    'upload.capture': {'en': 'Capture', 'tm': 'Surata al', 'ru': 'Снять'},
+    'upload.use_camera': {'en': 'Use Camera', 'tm': 'Kamerany ulan', 'ru': 'Использовать камеру'},
+    'upload.file_upload': {'en': 'Upload File', 'tm': 'Faýl ýükläň', 'ru': 'Загрузить файл'},
+    'upload.change_photo': {'en': 'Change Photo', 'tm': 'Suraty çalyş', 'ru': 'Изменить фото'},
+    'upload.submit': {'en': 'Post to Marketplace', 'tm': 'Bazara ýerleşdir', 'ru': 'Опубликовать в маркетплейсе'},
+    'upload.camera_denied': {'en': 'Camera access denied.', 'tm': 'Kamera rugsady berilmedi.', 'ru': 'Доступ к камере запрещен.'},
+    'market.ai_title': {'en': 'Live Expert', 'tm': 'Göni ekspert', 'ru': 'Онлайн-эксперт'},
+    'market.ai_heading': {'en': 'Ask AI about this search', 'tm': 'Bu gözleg boýunça AI-den soraň', 'ru': 'Спросите ИИ об этом поиске'},
+    'market.ai_idle': {'en': 'Nothing runs until you ask.', 'tm': 'Siz sorançyňyz hiç zat işlemeýär.', 'ru': 'Пока вы не спросите, ничего не запускается.'},
+    'market.ai_learn': {'en': 'Learn these results', 'tm': 'Şu netijeleri öwren', 'ru': 'Разобрать результаты'},
+    'market.ai_setup': {'en': 'Setup help', 'tm': 'Gurnamak boýunça kömek', 'ru': 'Помощь с настройкой'},
+    'market.ai_input': {'en': 'Ask about setup, inspection, or usage', 'tm': 'Gurnama, barlag ýa-da ulanyş barada soraň', 'ru': 'Спросите о настройке, проверке или использовании'},
+    'market.ai_button': {'en': 'Ask AI', 'tm': 'AI-den sora', 'ru': 'Спросить ИИ'},
+    'market.ai_launcher': {'en': 'AI chat', 'tm': 'AI çat', 'ru': 'Чат с ИИ'},
+    'market.category_all': {'en': 'All Items', 'tm': 'Ähli harytlar', 'ru': 'Все товары'},
+    'market.filters': {'en': 'Filters', 'tm': 'Süzgüçler', 'ru': 'Фильтры'},
+    'market.filters_hint': {'en': 'Location filters stay hidden until you open them.', 'tm': 'Ýerleşiş süzgüçleri siz açýança gizlin galýar.', 'ru': 'Фильтры местоположения скрыты, пока вы их не откроете.'},
+    'market.close_filters': {'en': 'Close filters', 'tm': 'Süzgüçleri ýap', 'ru': 'Закрыть фильтры'},
+    'market.per_hour': {'en': 'hr', 'tm': 'sagat', 'ru': 'час'},
+    'market.per_day': {'en': 'day', 'tm': 'gün', 'ru': 'день'},
+    'detail.ai_heading': {'en': 'Ask how to learn or set it up', 'tm': 'Öwrenmek ýa-da gurnamak barada soraň', 'ru': 'Спросите, как освоить или настроить'},
+    'detail.ai_learn': {'en': 'Learn this item', 'tm': 'Şu harydy öwren', 'ru': 'Изучить товар'},
+    'detail.ai_setup': {'en': 'How to set it up', 'tm': 'Nädip gurnamaly', 'ru': 'Как настроить'},
+    'detail.hosted_by': {'en': 'Hosted by', 'tm': 'Eýesi', 'ru': 'Владелец'},
+    'detail.unknown_owner': {'en': 'Hosted by Unknown user', 'tm': 'Eýesi näbelli ulanyjy', 'ru': 'Владелец: неизвестный пользователь'},
+    'detail.owner_unavailable': {'en': 'Owner account is unavailable', 'tm': 'Eýesiniň hasaby elýeterli däl', 'ru': 'Аккаунт владельца недоступен'},
+    'detail.duration': {'en': 'Duration', 'tm': 'Möhlet', 'ru': 'Длительность'},
+    'detail.total': {'en': 'Total', 'tm': 'Jemi', 'ru': 'Итого'},
+    'detail.rent_now': {'en': 'Rent Now', 'tm': 'Häzir kärendesine al', 'ru': 'Арендовать'},
+    'detail.buy_now': {'en': 'Buy Now', 'tm': 'Häzir satyn al', 'ru': 'Купить'},
+    'detail.negotiate': {'en': 'Negotiate Price', 'tm': 'Bahany ylalaş', 'ru': 'Торговаться'},
+    'detail.proposed_price': {'en': 'Proposed Price (TMT)', 'tm': 'Teklip edilýän baha (TMT)', 'ru': 'Предлагаемая цена (TMT)'},
+    'detail.send_offer': {'en': 'Send Offer', 'tm': 'Teklip ugrat', 'ru': 'Отправить предложение'},
+    'detail.open_chat': {'en': 'Open Chat', 'tm': 'Çaty aç', 'ru': 'Открыть чат'},
+    'detail.request_pending': {'en': 'Request Pending', 'tm': 'Haýyş garaşylýar', 'ru': 'Запрос ожидает'},
+    'detail.accept_chat_request': {'en': 'Accept Chat Request', 'tm': 'Çat haýyşyny kabul et', 'ru': 'Принять запрос чата'},
+    'detail.request_chat': {'en': 'Request Chat', 'tm': 'Çat sora', 'ru': 'Запросить чат'},
+    'detail.description': {'en': 'Description', 'tm': 'Düşündiriş', 'ru': 'Описание'},
+    'detail.no_description': {'en': 'No description provided.', 'tm': 'Düşündiriş berilmedi.', 'ru': 'Описание не указано.'},
+    'detail.reviews_title': {'en': 'Product Reviews', 'tm': 'Haryt baradaky teswirler', 'ru': 'Отзывы о товаре'},
+    'detail.your_rating': {'en': 'Your Rating (1-5)', 'tm': 'Siziň bahaňyz (1-5)', 'ru': 'Ваша оценка (1-5)'},
+    'detail.review_placeholder': {'en': 'Share your experience with this item...', 'tm': 'Bu haryt boýunça tejribäňizi paýlaşyň...', 'ru': 'Поделитесь впечатлением об этом товаре...'},
+    'detail.submit_review': {'en': 'Submit Review', 'tm': 'Teswiri ugrat', 'ru': 'Отправить отзыв'},
+    'detail.no_reviews': {'en': 'No reviews for this product yet.', 'tm': 'Bu haryt barada entek teswir ýok.', 'ru': 'Пока нет отзывов об этом товаре.'},
+    'login.encryption': {'en': 'AES-256 Bit Encryption Active', 'tm': 'AES-256 bit şifrleme işjeň', 'ru': 'Шифрование AES-256 активно'},
+    'register.page_title': {'en': 'KYC Registration', 'tm': 'KYC hasap açmak', 'ru': 'KYC-регистрация'},
+    'register.step1_title': {'en': 'Select Your Region', 'tm': 'Sebitiňizi saýlaň', 'ru': 'Выберите регион'},
+    'register.step1_desc': {'en': 'Choose the country where your passport was issued.', 'tm': 'Pasportyňyz berlen ýurdy saýlaň.', 'ru': 'Выберите страну, где выдан ваш паспорт.'},
+    'register.select_country': {'en': 'Select Country', 'tm': 'Ýurdy saýlaň', 'ru': 'Выберите страну'},
+    'register.continue': {'en': 'Continue', 'tm': 'Dowam et', 'ru': 'Продолжить'},
+    'register.manual_verification': {'en': 'Manual Verification:', 'tm': 'El bilen barlag:', 'ru': 'Ручная проверка:'},
+    'register.manual_verification_text': {'en': 'Please provide a clear photo of your passport. Our administrators will verify your identity manually.', 'tm': 'Pasportyňyzyň düşnükli suratyny ýükläň. Administratorlar şahsyýetiňizi el bilen barlar.', 'ru': 'Пожалуйста, загрузите четкое фото паспорта. Администраторы проверят вашу личность вручную.'},
+    'register.preparing_document': {'en': 'Preparing document...', 'tm': 'Resminama taýýarlanýar...', 'ru': 'Подготовка документа...'},
+    'register.full_name_passport': {'en': 'Full Name (as in passport)', 'tm': 'Doly ady (pasportdaky ýaly)', 'ru': 'Полное имя (как в паспорте)'},
+    'register.full_name': {'en': 'Full Name', 'tm': 'Doly ady', 'ru': 'Полное имя'},
+    'register.age': {'en': 'Age', 'tm': 'Ýaşy', 'ru': 'Возраст'},
+    'register.matches_passport': {'en': 'Please ensure the information matches your uploaded passport exactly.', 'tm': 'Maglumatlaryň ýüklän pasportyňyz bilen doly gabat gelýändigine göz ýetiriň.', 'ru': 'Убедитесь, что данные полностью совпадают с загруженным паспортом.'},
+    'register.confirm_details': {'en': 'Confirm Details', 'tm': 'Maglumatlary tassyklamak', 'ru': 'Подтвердить данные'},
+    'register.agreement_title': {'en': 'HandShake Rental Agreement', 'tm': 'HandShake kärende şertnamasy', 'ru': 'Договор аренды HandShake'},
+    'register.agreement_intro': {'en': 'By using HandShake, you agree to the following terms:', 'tm': 'HandShake ulanmak bilen şu şertlere razy bolýarsyňyz:', 'ru': 'Используя HandShake, вы соглашаетесь со следующими условиями:'},
+    'register.agreement_item': {'en': 'Item Condition:', 'tm': 'Harydyň ýagdaýy:', 'ru': 'Состояние товара:'},
+    'register.agreement_item_text': {'en': 'You must return items in the same condition as received.', 'tm': 'Harydy alan ýagdaýyňyzda yzyna gaýtarmaly.', 'ru': 'Вы должны вернуть товар в том же состоянии, в котором получили.'},
+    'register.agreement_late': {'en': 'Late Fees:', 'tm': 'Giçikme jerimesi:', 'ru': 'Штраф за просрочку:'},
+    'register.agreement_late_text': {'en': 'A late fee of 15% per day will be applied to delayed returns.', 'tm': 'Giç tabşyrylan haryt üçin her gün 15% jerime ulanylýar.', 'ru': 'За просроченный возврат взимается штраф 15% в день.'},
+    'register.agreement_damage': {'en': 'Damages:', 'tm': 'Zeperler:', 'ru': 'Повреждения:'},
+    'register.agreement_damage_text': {'en': 'You are fully responsible for any damages incurred during the rental period.', 'tm': 'Kärende döwründe dörän ähli zeperler üçin doly jogapkär siz.', 'ru': 'Вы полностью отвечаете за любой ущерб в период аренды.'},
+    'register.agreement_verify': {'en': 'Verification:', 'tm': 'Barlag:', 'ru': 'Проверка:'},
+    'register.agreement_verify_text': {'en': 'You confirm that all identity documents provided are genuine.', 'tm': 'Berlen ähli şahsyýet resminamalarynyň hakykylygyny tassyklaýarsyňyz.', 'ru': 'Вы подтверждаете подлинность всех предоставленных документов.'},
+    'register.agreement_outro': {'en': 'Failure to comply with these rules will result in immediate account suspension and potential legal action.', 'tm': 'Bu düzgünleriň bozulmagy hasabyň derrew togtadylmagyna we kanuny çäreleriň görülmegine getirip biler.', 'ru': 'Нарушение этих правил приведет к немедленной блокировке аккаунта и возможным юридическим мерам.'},
+    'register.verification_question': {'en': 'Verification Question: What is the late fee percentage mentioned above?', 'tm': 'Barlag soragy: Ýokarda görkezilen giçikme göterimi näçe?', 'ru': 'Проверочный вопрос: какой процент штрафа за просрочку указан выше?'},
+    'register.answer_placeholder': {'en': 'Type the percentage (e.g. 50%)', 'tm': 'Göterimi ýazyň (mysal üçin 50%)', 'ru': 'Введите процент (например, 50%)'},
+    'register.accept_sign': {'en': 'Accept & Sign', 'tm': 'Kabul et we gol çek', 'ru': 'Принять и подписать'},
+    'register.finish': {'en': 'Finish Registration', 'tm': 'Hasaby tamamlap döret', 'ru': 'Завершить регистрацию'},
+    'register.have_account': {'en': 'Already have an account?', 'tm': 'Hasabyňyz eýýäm barmy?', 'ru': 'Уже есть аккаунт?'},
+    'register.passport_kyc': {'en': 'Passport KYC', 'tm': 'Pasport KYC', 'ru': 'Паспортный KYC'},
+    'register.passport_photo': {'en': "Take a clear photo of your passport's main page.", 'tm': 'Pasportyň esasy sahypasynyň düşnükli suratyny alyň.', 'ru': 'Сделайте четкое фото основной страницы паспорта.'},
+    'register.personal_details': {'en': 'Personal Details', 'tm': 'Şahsy maglumatlar', 'ru': 'Личные данные'},
+    'register.personal_details_desc': {'en': 'Enter the information as it appears on your document.', 'tm': 'Maglumatlary resminamadaky ýaly giriziň.', 'ru': 'Введите данные так, как они указаны в документе.'},
+    'register.legal_agreement': {'en': 'Legal Agreement', 'tm': 'Kanuny ylalaşyk', 'ru': 'Юридическое соглашение'},
+    'register.legal_agreement_desc': {'en': 'Please read the rental contract carefully.', 'tm': 'Kärende şertnamasyny üns bilen okaň.', 'ru': 'Пожалуйста, внимательно прочитайте договор аренды.'},
+    'register.create_account': {'en': 'Create Account', 'tm': 'Hasap döret', 'ru': 'Создать аккаунт'},
+    'register.create_account_desc': {'en': 'Set your login credentials to finish.', 'tm': 'Tamamlamak üçin giriş maglumatlaryny düzüň.', 'ru': 'Укажите данные для входа, чтобы завершить.'},
+    'register.fill_all': {'en': 'Please fill in all details.', 'tm': 'Ähli maglumatlary dolduryň.', 'ru': 'Пожалуйста, заполните все данные.'},
+    'register.incorrect_answer': {'en': 'Incorrect answer. Please read the contract carefully to find the late fee percentage.', 'tm': 'Jogap nädogry. Giçikme göterimini tapmak üçin şertnamany üns bilen okaň.', 'ru': 'Неверный ответ. Внимательно прочитайте договор, чтобы найти процент штрафа.'},
+    'profile.edit_title': {'en': 'Edit Profile', 'tm': 'Profili üýtget', 'ru': 'Редактировать профиль'},
+    'profile.edit_subtitle': {'en': 'Update your photo and personal details.', 'tm': 'Suratyňyzy we şahsy maglumatlaryňyzy täzeläň.', 'ru': 'Обновите фото и личные данные.'},
+    'profile.profile_picture': {'en': 'Profile Picture', 'tm': 'Profil suraty', 'ru': 'Фото профиля'},
+    'profile.camera': {'en': 'Camera', 'tm': 'Kamera', 'ru': 'Камера'},
+    'profile.upload': {'en': 'Upload', 'tm': 'Ýükle', 'ru': 'Загрузить'},
+    'profile.full_name': {'en': 'Full Name', 'tm': 'Doly ady', 'ru': 'Полное имя'},
+    'profile.location_city': {'en': 'Location (City)', 'tm': 'Ýerleşýän ýeri (şäher)', 'ru': 'Местоположение (город)'},
+    'profile.about_you': {'en': 'About You (Bio)', 'tm': 'Özüňiz barada (bio)', 'ru': 'О себе (био)'},
+    'profile.bio_placeholder': {'en': 'Tell the community about yourself...', 'tm': 'Jemgyýetçilige özüňiz barada ýazyň...', 'ru': 'Расскажите сообществу о себе...'},
+    'profile.save_changes': {'en': 'Save Changes', 'tm': 'Üýtgeşmeleri ýatda sakla', 'ru': 'Сохранить изменения'},
+    'profile.cancel': {'en': 'Cancel', 'tm': 'Ýatyr', 'ru': 'Отмена'},
+    'profile.page_title': {'en': 'Profile', 'tm': 'Profil', 'ru': 'Профиль'},
+    'profile.unknown_location': {'en': 'Unknown location', 'tm': 'Näbelli ýer', 'ru': 'Неизвестное местоположение'},
+    'profile.listings_count': {'en': 'listings', 'tm': 'bildiriş', 'ru': 'объявления'},
+    'profile.rating': {'en': 'Rating', 'tm': 'Baha', 'ru': 'Рейтинг'},
+    'profile.kyc_verified': {'en': 'KYC Verified', 'tm': 'KYC tassyklandy', 'ru': 'KYC подтвержден'},
+    'profile.unblock': {'en': 'Unblock', 'tm': 'Blokdan çykarmak', 'ru': 'Разблокировать'},
+    'profile.you_blocked': {'en': 'You are blocked', 'tm': 'Siz bloklanypsyňyz', 'ru': 'Вы заблокированы'},
+    'profile.send_message': {'en': 'Send Message', 'tm': 'Habar ugrat', 'ru': 'Отправить сообщение'},
+    'profile.accept_request': {'en': 'Accept Request', 'tm': 'Haýyşy kabul et', 'ru': 'Принять запрос'},
+    'profile.decline': {'en': 'Decline', 'tm': 'Ret et', 'ru': 'Отклонить'},
+    'profile.request_chat': {'en': 'Request Chat', 'tm': 'Çat sora', 'ru': 'Запросить чат'},
+    'profile.block': {'en': 'Block', 'tm': 'Blokla', 'ru': 'Заблокировать'},
+    'profile.about': {'en': 'About', 'tm': 'Barada', 'ru': 'О пользователе'},
+    'profile.default_bio': {'en': "This user is a proud member of the HandShake community but hasn't written a bio yet.", 'tm': 'Bu ulanyjy HandShake jemgyýetiniň agzasy, ýöne entek bio ýazmady.', 'ru': 'Этот пользователь является участником сообщества HandShake, но пока не добавил описание.'},
+    'profile.service_agreement': {'en': 'Service Agreement', 'tm': 'Hyzmat ylalaşygy', 'ru': 'Сервисное соглашение'},
+    'profile.important': {'en': 'Important:', 'tm': 'Möhüm:', 'ru': 'Важно:'},
+    'profile.commission_notice': {'en': 'HandShake charges a 5% commission on every successful rental transaction. By requesting this chat, you agree to these terms.', 'tm': 'HandShake her üstünlikli kärende geleşigi üçin 5% hyzmat tölegini alýar. Bu çaty soramak bilen şol şertlere razy bolýarsyňyz.', 'ru': 'HandShake взимает 5% комиссии с каждой успешной сделки аренды. Запрашивая этот чат, вы соглашаетесь с этими условиями.'},
+    'profile.type_i_read': {'en': 'Type "I READ" to confirm:', 'tm': 'Tassyklamak üçin "I READ" ýazyň:', 'ru': 'Введите "I READ" для подтверждения:'},
+    'profile.confirm_request': {'en': 'Confirm & Request', 'tm': 'Tassykla we sora', 'ru': 'Подтвердить и запросить'},
+    'profile.pending_requests': {'en': 'Pending Chat Requests', 'tm': 'Garaşylýan çat haýyşlary', 'ru': 'Ожидающие запросы чата'},
+    'profile.waiting': {'en': 'waiting', 'tm': 'garaşýar', 'ru': 'ожидают'},
+    'profile.listings': {'en': 'Listings', 'tm': 'Bildirişler', 'ru': 'Объявления'},
+    'profile.items_total': {'en': 'items total', 'tm': 'haryt jemi', 'ru': 'товаров всего'},
+    'profile.no_items': {'en': 'No items listed yet.', 'tm': 'Entäk hiç hili haryt ýerleşdirilmedi.', 'ru': 'Пока нет размещенных товаров.'},
+    'profile.incoming_offers': {'en': 'Incoming Offers (Items you own)', 'tm': 'Gelýän teklipler (öz harytlaryňyz)', 'ru': 'Входящие предложения (ваши товары)'},
+    'profile.wants_rent': {'en': 'wants to rent', 'tm': 'kärendesine almak isleýär', 'ru': 'хочет арендовать'},
+    'profile.offer': {'en': 'Offer', 'tm': 'Teklip', 'ru': 'Предложение'},
+    'profile.accept_qr': {'en': 'Accept & Give QR', 'tm': 'Kabul et we QR ber', 'ru': 'Принять и показать QR'},
+    'profile.show_qr': {'en': 'Show QR Code', 'tm': 'QR kody görkez', 'ru': 'Показать QR-код'},
+    'profile.cancel_deal': {'en': 'Cancel Deal', 'tm': 'Ylalaşygy ýatyr', 'ru': 'Отменить сделку'},
+    'profile.no_incoming_offers': {'en': 'No incoming offers yet.', 'tm': 'Entäk gelýän teklip ýok.', 'ru': 'Пока нет входящих предложений.'},
+    'profile.sent_offers': {'en': 'My Sent Offers', 'tm': 'Ugradan tekliplerim', 'ru': 'Мои отправленные предложения'},
+    'profile.offering_for': {'en': 'Offering for', 'tm': 'Şu zat üçin teklip', 'ru': 'Предложение за'},
+    'profile.you_proposed': {'en': 'You proposed', 'tm': 'Siziň teklibiňiz', 'ru': 'Вы предложили'},
+    'profile.pending_owner': {'en': 'Pending Owner Approval', 'tm': 'Eýesiniň tassygy garaşylýar', 'ru': 'Ожидается одобрение владельца'},
+    'profile.cancel_offer': {'en': 'Cancel Offer', 'tm': 'Teklibi ýatyr', 'ru': 'Отменить предложение'},
+    'profile.owner_accepted': {'en': 'Owner Accepted!', 'tm': 'Eýesi kabul etdi!', 'ru': 'Владелец принял!'},
+    'profile.meet_owner': {'en': 'Meet the owner & scan their QR', 'tm': 'Eýesi bilen duşuşyň we onuň QR koduny skaneriň', 'ru': 'Встретьтесь с владельцем и отсканируйте его QR'},
+    'profile.no_sent_offers': {'en': "You haven't sent any offers yet.", 'tm': 'Entäk hiç hili teklip ugratmadyňyz.', 'ru': 'Вы еще не отправляли предложений.'},
+    'profile.orders_rentals': {'en': 'My Orders & Rentals', 'tm': 'Sargytlarym we kärendelerim', 'ru': 'Мои заказы и аренды'},
+    'profile.status': {'en': 'Status', 'tm': 'Ýagdaý', 'ru': 'Статус'},
+    'profile.renting': {'en': 'Renting', 'tm': 'Kärendede', 'ru': 'В аренде'},
+    'profile.calculating': {'en': 'Calculating...', 'tm': 'Hasaplanýar...', 'ru': 'Расчет...'},
+    'profile.overdue': {'en': 'OVERDUE', 'tm': 'MÖHLETI GEÇDI', 'ru': 'ПРОСРОЧЕНО'},
+    'profile.left': {'en': 'left', 'tm': 'galdy', 'ru': 'осталось'},
+    'profile.no_orders': {'en': "You haven't ordered anything yet.", 'tm': 'Entäk hiç zat sargyt etmediňiz.', 'ru': 'Вы еще ничего не заказывали.'},
+    'profile.show_to_renter': {'en': 'Show this to Renter', 'tm': 'Muny kärende alýana görkeziň', 'ru': 'Покажите это арендатору'},
+    'profile.scan_qr_notice': {'en': 'They should scan this with their phone camera to confirm the hand-off.', 'tm': 'Tabşyryşy tassyklamak üçin muny telefon kamerasy bilen skanerlemeli.', 'ru': 'Они должны отсканировать это камерой телефона, чтобы подтвердить передачу.'},
+    'profile.close': {'en': 'Close', 'tm': 'Ýap', 'ru': 'Закрыть'},
+    'profile.community_feedback': {'en': 'Community Feedback', 'tm': 'Jemgyýetiň pikirleri', 'ru': 'Отзывы сообщества'},
+    'profile.no_reviews': {'en': 'No reviews yet.', 'tm': 'Entäk teswir ýok.', 'ru': 'Пока нет отзывов.'},
+    'profile.confirm_i_read': {'en': "Please type 'I READ' to confirm.", 'tm': "Tassyklaň üçin 'I READ' ýazyň.", 'ru': "Введите 'I READ' для подтверждения."},
+    'chat.page_title': {'en': 'Chat', 'tm': 'Çat', 'ru': 'Чат'},
+    'chat.chats': {'en': 'Chats', 'tm': 'Çatlar', 'ru': 'Чаты'},
+    'chat.requests': {'en': 'Requests', 'tm': 'Haýyşlar', 'ru': 'Запросы'},
+    'chat.open_messages': {'en': 'Click to open messages', 'tm': 'Habarlary açmak üçin basyň', 'ru': 'Нажмите, чтобы открыть сообщения'},
+    'chat.no_active': {'en': 'No active chats yet.', 'tm': 'Entäk işjeň çat ýok.', 'ru': 'Пока нет активных чатов.'},
+    'chat.accept': {'en': 'Accept', 'tm': 'Kabul et', 'ru': 'Принять'},
+    'chat.decline': {'en': 'Decline', 'tm': 'Ret et', 'ru': 'Отклонить'},
+    'chat.no_requests': {'en': 'No pending requests.', 'tm': 'Garaşylýan haýyş ýok.', 'ru': 'Нет ожидающих запросов.'},
+    'chat.active_now': {'en': 'Active now', 'tm': 'Häzir işjeň', 'ru': 'Сейчас в сети'},
+    'chat.view_profile': {'en': 'View Profile', 'tm': 'Profili gör', 'ru': 'Посмотреть профиль'},
+    'chat.write_message': {'en': 'Write a message...', 'tm': 'Habar ýazyň...', 'ru': 'Напишите сообщение...'},
+    'chat.your_messages': {'en': 'Your Messages', 'tm': 'Siziň habarlaryňyz', 'ru': 'Ваши сообщения'},
+    'chat.select_chat': {'en': 'Select a chat from the left to start messaging or accept new requests.', 'tm': 'Habarlaşmagy başlamak ýa-da täze haýyşlary kabul etmek üçin çepden çaty saýlaň.', 'ru': 'Выберите чат слева, чтобы начать переписку или принять новые запросы.'},
+    'payment.page_title': {'en': 'Secure Checkout', 'tm': 'Howpsuz töleg', 'ru': 'Безопасная оплата'},
+    'payment.select_method': {'en': 'Select Payment Method', 'tm': 'Töleg usulyny saýlaň', 'ru': 'Выберите способ оплаты'},
+    'payment.cardholder': {'en': 'Cardholder Name', 'tm': 'Kart eýesiniň ady', 'ru': 'Имя владельца карты'},
+    'payment.cardholder_placeholder': {'en': 'Full Name on Card', 'tm': 'Kartdaky doly ady', 'ru': 'Полное имя на карте'},
+    'payment.card_number': {'en': 'Card Number', 'tm': 'Kart belgisi', 'ru': 'Номер карты'},
+    'payment.expiration': {'en': 'Expiration Date', 'tm': 'Möhleti', 'ru': 'Срок действия'},
+    'payment.insufficient': {'en': 'Insufficient Balance', 'tm': 'Balans ýeterlik däl', 'ru': 'Недостаточно средств'},
+    'payment.pay': {'en': 'Pay', 'tm': 'Töle', 'ru': 'Оплатить'},
+    'payment.encrypted': {'en': 'Your payment data is encrypted and secure.', 'tm': 'Töleg maglumatlaryňyz şifrlenen we howpsuz saklanýar.', 'ru': 'Ваши платежные данные зашифрованы и защищены.'},
+    'payment.summary': {'en': 'Order Summary', 'tm': 'Sargyt gysgaça mazmuny', 'ru': 'Сводка заказа'},
+    'payment.by': {'en': 'by', 'tm': 'eýesi', 'ru': 'владелец'},
+    'payment.base_rent': {'en': 'Base Rent', 'tm': 'Esasy kärende', 'ru': 'Базовая аренда'},
+    'payment.fee': {'en': 'HandShake Fee (5%)', 'tm': 'HandShake hyzmat tölegi (5%)', 'ru': 'Комиссия HandShake (5%)'},
+    'payment.deposit': {'en': 'Security Deposit', 'tm': 'Gorag goýumy', 'ru': 'Гарантийный депозит'},
+    'payment.deposit_refund': {'en': 'Refundable upon return', 'tm': 'Gaýtarylanyňyzda yzyna berilýär', 'ru': 'Возвращается после возврата'},
+    'payment.total': {'en': 'Total to Pay', 'tm': 'Tölemeli jemi', 'ru': 'Итого к оплате'},
+    'payment.wallet': {'en': 'YOUR WALLET', 'tm': 'SIZIŇ GAPJYGYŇYZ', 'ru': 'ВАШ КОШЕЛЕК'},
+    'payment.cancel_back': {'en': 'Cancel and go back', 'tm': 'Ýatyryp yza gaýdyň', 'ru': 'Отменить и вернуться'},
+    'flash.image_too_large': {'en': 'The uploaded image is too large. Please use a smaller or compressed image.', 'tm': 'Ýüklenen surat örän uly. Has kiçi ýa-da gysylan surat ulanyň.', 'ru': 'Загруженное изображение слишком большое. Используйте более маленькое или сжатое изображение.'},
+    'flash.sign_in_switch': {'en': 'Sign in below to switch to another account.', 'tm': 'Başga hasaba geçmek üçin aşakdan giriň.', 'ru': 'Войдите ниже, чтобы переключиться на другой аккаунт.'},
+    'flash.select_region': {'en': 'Please select your region.', 'tm': 'Sebitiňizi saýlaň.', 'ru': 'Пожалуйста, выберите свой регион.'},
+    'flash.full_name_required': {'en': 'Full name is required.', 'tm': 'Doly ady hökmany.', 'ru': 'Полное имя обязательно.'},
+    'flash.valid_age_required': {'en': 'Valid age is required.', 'tm': 'Dogry ýaş girizmek hökmany.', 'ru': 'Необходимо указать корректный возраст.'},
+    'flash.email_required_general': {'en': 'Email is required.', 'tm': 'Email hökmany.', 'ru': 'Email обязателен.'},
+    'flash.password_len': {'en': 'Password must be at least 6 characters.', 'tm': 'Parol azyndan 6 nyşandan ybarat bolmaly.', 'ru': 'Пароль должен содержать минимум 6 символов.'},
+    'flash.passwords_no_match': {'en': 'Passwords do not match.', 'tm': 'Parollar gabat gelenok.', 'ru': 'Пароли не совпадают.'},
+    'flash.email_exists': {'en': 'Email already exists', 'tm': 'Bu email eýýäm bar', 'ru': 'Этот email уже существует'},
+    'flash.passport_required': {'en': 'Passport photo is required for KYC verification.', 'tm': 'KYC barlagy üçin pasport suraty hökmany.', 'ru': 'Для KYC-проверки требуется фото паспорта.'},
+    'flash.invalid_passport': {'en': 'Invalid passport image. Please upload again.', 'tm': 'Pasport suraty nädogry. Täzeden ýükläň.', 'ru': 'Некорректное изображение паспорта. Загрузите снова.'},
+    'flash.registration_complete': {'en': 'Registration complete. We sent your information to admin. Your KYC status is processing.', 'tm': 'Hasap açyş tamamlandy. Maglumatlaryňyz admina ugradyldy. KYC ýagdaýyňyz işlenýär.', 'ru': 'Регистрация завершена. Ваши данные отправлены администратору. Статус KYC обрабатывается.'},
+    'flash.valid_neighborhood': {'en': 'Please select a valid neighborhood or street.', 'tm': 'Dogry ýer ýa-da köçe saýlaň.', 'ru': 'Пожалуйста, выберите корректный район или улицу.'},
+    'flash.own_item': {'en': 'You cannot rent/buy your own item!', 'tm': 'Öz harydyňyzy kärendesine alyp ýa-da satyn alyp bilmersiňiz!', 'ru': 'Нельзя арендовать или покупать собственный товар!'},
+    'flash.item_rented': {'en': 'This item is currently rented out.', 'tm': 'Bu haryt häzir kärendededir.', 'ru': 'Этот товар сейчас в аренде.'},
+    'flash.rental_request_sent': {'en': 'Rental request sent to the owner! Wait for their approval and meet to scan the QR code.', 'tm': 'Kärende haýyşy eýesine ugradyldy! Tassyklamagyna garaşyň we QR kody skanerlemek üçin duşuşyň.', 'ru': 'Запрос на аренду отправлен владельцу! Дождитесь одобрения и встретьтесь для сканирования QR-кода.'},
+    'flash.negotiate_self': {'en': 'You cannot negotiate with yourself!', 'tm': 'Özüňiz bilen söwdalaşyp bilmersiňiz!', 'ru': 'Нельзя торговаться с самим собой!'},
+    'flash.enter_price': {'en': 'Please enter a proposed price.', 'tm': 'Teklip edilýän bahany giriziň.', 'ru': 'Введите предлагаемую цену.'},
+    'flash.negotiation_sent': {'en': 'Negotiation request sent to the owner!', 'tm': 'Söwdalaşyk haýyşy eýesine ugradyldy!', 'ru': 'Запрос на торг отправлен владельцу!'},
+    'flash.unauthorized': {'en': 'Unauthorized.', 'tm': 'Rugsat ýok.', 'ru': 'Нет доступа.'},
+    'flash.deal_accepted': {'en': 'Deal accepted! Show the QR code to the renter when you meet.', 'tm': 'Ylalaşyk kabul edildi! Duşuşanda kärende alýana QR kody görkeziň.', 'ru': 'Сделка принята! При встрече покажите арендатору QR-код.'},
+    'flash.negotiation_cancelled': {'en': 'Negotiation cancelled.', 'tm': 'Söwdalaşyk ýatyryldy.', 'ru': 'Торг отменен.'},
+    'flash.only_renter_confirm': {'en': 'Only the renter can confirm the hand-off.', 'tm': 'Tabşyryşy diňe kärende alyjy tassyk edip biler.', 'ru': 'Только арендатор может подтвердить передачу.'},
+    'flash.deal_not_ready': {'en': 'This deal is not ready for confirmation.', 'tm': 'Bu ylalaşyk entek tassyk üçin taýyn däl.', 'ru': 'Эта сделка пока не готова к подтверждению.'},
+    'flash.verified_required': {'en': 'You must be a verified user to rent high-value items. Please wait for admin approval.', 'tm': 'Gymmat bahaly harytlary kärendesine almak üçin tassyklanan ulanyjy bolmaly. Admin tassygyňa garaşyň.', 'ru': 'Чтобы арендовать дорогие товары, вы должны быть подтвержденным пользователем. Дождитесь одобрения администратора.'},
+    'flash.insufficient_funds': {'en': 'Insufficient funds!', 'tm': 'Ýeterlik serişdeler ýok!', 'ru': 'Недостаточно средств!'},
+    'flash.payment_success': {'en': 'Payment successful! HandShake is holding the deposit. Rental started!', 'tm': 'Töleg üstünlikli boldy! HandShake goýumy saklaýar. Kärende başlandy!', 'ru': 'Оплата прошла успешно! HandShake удерживает депозит. Аренда началась!'},
+    'flash.transaction_failed': {'en': 'Transaction failed.', 'tm': 'Amal şowsuz boldy.', 'ru': 'Транзакция не удалась.'},
+    'flash.only_owner_return': {'en': 'Only the owner can confirm return.', 'tm': 'Gaýtarylyşy diňe eýesi tassyk edip biler.', 'ru': 'Только владелец может подтвердить возврат.'},
+    'flash.invalid_action': {'en': 'Invalid action.', 'tm': 'Nädogry amal.', 'ru': 'Недопустимое действие.'},
+    'flash.return_confirmed': {'en': 'Item return confirmed! Security deposit released back to the renter.', 'tm': 'Harydyň gaýtarylyşy tassyklandy! Gorag goýumy kärende alýana yzyna goýberildi.', 'ru': 'Возврат товара подтвержден! Гарантийный депозит возвращен арендатору.'},
+    'flash.return_error': {'en': 'Error processing return.', 'tm': 'Gaýtarylyşy işlemekde ýalňyşlyk boldy.', 'ru': 'Ошибка при обработке возврата.'},
+    'flash.location_required': {'en': 'Location is required.', 'tm': 'Ýerleşýän ýer hökmany.', 'ru': 'Местоположение обязательно.'},
+    'flash.chat_self': {'en': 'You cannot chat-request yourself.', 'tm': 'Özüňiz bilen çat sorap bilmersiňiz.', 'ru': 'Нельзя запросить чат с самим собой.'},
+    'flash.chat_blocked': {'en': 'Chat request unavailable because one of you is blocked.', 'tm': 'Sizden biri bloklananlygy sebäpli çat haýyşy elýeterli däl.', 'ru': 'Запрос чата недоступен, потому что один из вас заблокирован.'},
+    'flash.chat_request_sent': {'en': 'Chat request sent!', 'tm': 'Çat haýyşy ugradyldy!', 'ru': 'Запрос чата отправлен!'},
+    'flash.chat_active_exists': {'en': 'You already have an active chat with this user.', 'tm': 'Bu ulanyjy bilen eýýäm işjeň çatyňyz bar.', 'ru': 'У вас уже есть активный чат с этим пользователем.'},
+    'flash.chat_request_exists': {'en': 'Chat request already exists.', 'tm': 'Çat haýyşy eýýäm bar.', 'ru': 'Запрос чата уже существует.'},
+    'flash.chat_request_incoming': {'en': 'This user already sent you a request. Open Messages to accept it.', 'tm': 'Bu ulanyjy size eýýäm haýyş iberdi. Kabul etmek üçin Habarlary açyň.', 'ru': 'Этот пользователь уже отправил вам запрос. Откройте сообщения, чтобы принять его.'},
+    'flash.chat_request_unavailable': {'en': 'This chat request is no longer available.', 'tm': 'Bu çat haýyşy indi elýeterli däl.', 'ru': 'Этот запрос чата больше недоступен.'},
+    'flash.block_self': {'en': 'You cannot block yourself.', 'tm': 'Özüňizi bloklap bilmersiňiz.', 'ru': 'Нельзя заблокировать себя.'},
+    'flash.user_blocked': {'en': 'User blocked.', 'tm': 'Ulanyjy bloklandy.', 'ru': 'Пользователь заблокирован.'},
+    'flash.user_unblocked': {'en': 'User unblocked.', 'tm': 'Ulanyjy blokdan çykaryldy.', 'ru': 'Пользователь разблокирован.'},
+    'flash.accept_request_first': {'en': 'This user requested to chat with you. Accept it in Requests first.', 'tm': 'Bu ulanyjy size çat sorady. Ilki Haýyşlar bölüminde kabul ediň.', 'ru': 'Этот пользователь запросил чат с вами. Сначала примите его в запросах.'},
+    'flash.request_pending': {'en': 'Your chat request is still pending approval.', 'tm': 'Çat haýyşyňyz heniz tassyk garaşýar.', 'ru': 'Ваш запрос чата все еще ожидает одобрения.'},
+    'flash.send_request_first': {'en': 'Send a chat request first before messaging this user.', 'tm': 'Bu ulanyja ýazmazdan öň ilki çat haýyşyny iberiň.', 'ru': 'Сначала отправьте запрос чата, прежде чем писать этому пользователю.'},
+    'flash.invalid_recipient': {'en': 'Invalid message recipient.', 'tm': 'Nädogry habar alyjy.', 'ru': 'Недопустимый получатель сообщения.'},
+    'flash.messaging_blocked': {'en': 'Messaging is unavailable because one of you is blocked.', 'tm': 'Sizden biri bloklananlygy sebäpli habarlaşmak elýeterli däl.', 'ru': 'Переписка недоступна, потому что один из вас заблокирован.'},
+    'flash.accepted_chat_required': {'en': 'You need an accepted chat request before sending messages.', 'tm': 'Habar ugratmazdan öň kabul edilen çat haýyşy gerek.', 'ru': 'Перед отправкой сообщений нужен принятый запрос чата.'},
+    'flash.rating_range': {'en': 'Rating must be between 1 and 5.', 'tm': 'Baha 1 bilen 5 aralygynda bolmaly.', 'ru': 'Оценка должна быть от 1 до 5.'},
+    'flash.review_empty': {'en': 'Review cannot be empty.', 'tm': 'Teswir boş bolup bilmez.', 'ru': 'Отзыв не может быть пустым.'},
+}
+
+LOCALIZED_CHOICES = {
+    'category': {
+        'hobbies': {'en': 'Hobbies', 'tm': 'Hobbi', 'ru': 'Хобби'},
+        'tech': {'en': 'Tech', 'tm': 'Tehnika', 'ru': 'Техника'},
+        'cars': {'en': 'Cars', 'tm': 'Ulaglar', 'ru': 'Авто'},
+        'houses': {'en': 'Houses', 'tm': 'Jaýlar', 'ru': 'Жилье'},
+        'tools': {'en': 'Tools', 'tm': 'Gurallar', 'ru': 'Инструменты'},
+        'books': {'en': 'Books', 'tm': 'Kitaplar', 'ru': 'Книги'},
+    },
+    'type': {
+        'rent': {'en': 'Rent', 'tm': 'Kärende', 'ru': 'Аренда'},
+        'sell': {'en': 'Sell', 'tm': 'Satmak', 'ru': 'Продажа'},
+        'exchange': {'en': 'Exchange', 'tm': 'Çalyşmak', 'ru': 'Обмен'},
+    },
+    'tx_status': {
+        'active': {'en': 'Renting', 'tm': 'Kärendede', 'ru': 'В аренде'},
+        'returned': {'en': 'Returned', 'tm': 'Gaýtaryldy', 'ru': 'Возвращено'},
+        'completed': {'en': 'Completed', 'tm': 'Tamamlandy', 'ru': 'Завершено'},
+        'accepted': {'en': 'Accepted', 'tm': 'Kabul edildi', 'ru': 'Принято'},
+        'negotiating': {'en': 'Negotiating', 'tm': 'Ylalaşylýar', 'ru': 'Торг'},
+    },
+}
+
+SEEDED_LOCALIZED_TEXT = {
+    'Sony A7III Camera': {'tm': 'Sony A7III kamera', 'ru': 'Камера Sony A7III'},
+    'DJI Mavic Air 2': {'tm': 'DJI Mavic Air 2 dron', 'ru': 'Дрон DJI Mavic Air 2'},
+    'Toyota Camry 2022': {'tm': 'Toyota Camry 2022', 'ru': 'Toyota Camry 2022'},
+    'BMW X5': {'tm': 'BMW X5', 'ru': 'BMW X5'},
+    'Mercedes-Benz G-Class': {'tm': 'Mercedes-Benz G-Class', 'ru': 'Mercedes-Benz G-Class'},
+    'Rare Art History Collection': {'tm': 'Seýrek sungat taryhy ýygyndysy', 'ru': 'Редкая коллекция по истории искусства'},
+    'Bosch Drill Set': {'tm': 'Bosch buraw toplumy', 'ru': 'Набор дрелей Bosch'},
+    'Professional Toolkit': {'tm': 'Professional gural toplumy', 'ru': 'Профессиональный набор инструментов'},
+    'PlayStation 5 + 2 Controllers': {'tm': 'PlayStation 5 + 2 pult', 'ru': 'PlayStation 5 + 2 геймпада'},
+    'Canon EOS R5': {'tm': 'Canon EOS R5 kamera', 'ru': 'Canon EOS R5'},
+    'Electric Skateboard': {'tm': 'Elektrik skeytbord', 'ru': 'Электроскейт'},
+    'Table Tennis Rackets (Pair)': {'tm': 'Stol tennisi raketkalary (jübüt)', 'ru': 'Ракетки для настольного тенниса (пара)'},
+    'Mountain Bike - Trek': {'tm': 'Dag welosipedi - Trek', 'ru': 'Горный велосипед Trek'},
+    'Perfect for professional shoots.': {'tm': 'Professional surata alyş üçin örän amatly.', 'ru': 'Идеально подходит для профессиональных съемок.'},
+    '4K drone for amazing aerial shots.': {'tm': 'Howa arkaly ajaýyp 4K düşüriliş üçin dron.', 'ru': '4K-дрон для впечатляющих аэрофотосъемок.'},
+    'Clean, reliable, and comfortable.': {'tm': 'Arassa, ygtybarly we amatly ulag.', 'ru': 'Чистый, надежный и комфортный автомобиль.'},
+    'Luxury SUV for special occasions.': {'tm': 'Aýratyn ýagdaýlar üçin kaşaň krossower.', 'ru': 'Премиальный SUV для особых случаев.'},
+    'The ultimate luxury off-roader.': {'tm': 'Ýokary derejeli kaşaň ýolagdan çykýan ulag.', 'ru': 'Максимально роскошный внедорожник.'},
+    'Set of 5 books about Renaissance art.': {'tm': 'Galkynyş döwrüniň sungaty barada 5 kitapdan ybarat toplum.', 'ru': 'Набор из 5 книг об искусстве эпохи Возрождения.'},
+    'Heavy duty drill with all attachments.': {'tm': 'Ähli goşundylary bilen güýçli buraw.', 'ru': 'Мощная дрель со всеми насадками.'},
+    '150-piece tool set for all home repairs.': {'tm': 'Öý abatlaýyş işleri üçin 150 bölekli gural toplumy.', 'ru': 'Набор из 150 инструментов для домашнего ремонта.'},
+    'Latest games included: GOW, Spider-Man.': {'tm': 'Soňky oýunlar hem bar: GOW, Spider-Man.', 'ru': 'В комплекте последние игры: GOW, Spider-Man.'},
+    'High-resolution full-frame mirrorless camera.': {'tm': 'Ýokary durulykdaky doly kadrly aynasuz kamera.', 'ru': 'Полнокадровая беззеркальная камера высокого разрешения.'},
+    'Fast and fun city commuting.': {'tm': 'Şäher içinde çalt we gyzykly gatnaw üçin.', 'ru': 'Быстрое и веселое передвижение по городу.'},
+    'Professional grade rackets for competitive play.': {'tm': 'Bäsdeşlik oýny üçin professional derejeli raketkalar.', 'ru': 'Профессиональные ракетки для соревновательной игры.'},
+    'Durable bike for trail riding.': {'tm': 'Dag ýollarynda sürmek üçin berk welosiped.', 'ru': 'Надежный велосипед для поездок по трассам.'},
+    'Excellent camera, very well maintained!': {'tm': 'Örän gowy saklanan ajaýyp kamera!', 'ru': 'Отличная камера, очень ухоженная!'},
+}
+
 # Seeded from current official administrative references for Turkmenistan,
 # with Ashgabat streets and avenues taken from official city transport notices.
 TURKMEN_LOCATION_DATA = [
@@ -411,6 +742,33 @@ def tr(key, **kwargs):
     if kwargs:
         return value.format(**kwargs)
     return value
+
+
+def ui_text(key, **kwargs):
+    locale = get_locale()
+    value = LOCALIZED_UI.get(key, {}).get(locale)
+    if value is None:
+        value = LOCALIZED_UI.get(key, {}).get('en', key)
+    if kwargs:
+        return value.format(**kwargs)
+    return value
+
+
+def choice_label(group, key):
+    locale = get_locale()
+    group_values = LOCALIZED_CHOICES.get(group, {})
+    value = group_values.get(key, {}).get(locale)
+    if value is None:
+        value = group_values.get(key, {}).get('en', key)
+    return value
+
+
+def localized_seeded_text(value):
+    locale = get_locale()
+    if locale == 'en':
+        return value
+    translated = SEEDED_LOCALIZED_TEXT.get(value, {}).get(locale)
+    return translated or value
 
 
 def is_admin_email(email):
@@ -673,7 +1031,7 @@ def apply_database_updates():
 
 @app.errorhandler(RequestEntityTooLarge)
 def handle_request_too_large(_error):
-    flash('The uploaded image is too large. Please use a smaller or compressed image.')
+    flash(ui_text('flash.image_too_large'))
 
     if request.path == url_for('register'):
         return redirect(url_for('register'))
@@ -776,6 +1134,14 @@ class Item(db.Model):
             return self.neighborhood.full_path
         return "Ashgabat"
 
+    @property
+    def localized_title(self):
+        return localized_seeded_text(self.title)
+
+    @property
+    def localized_description(self):
+        return localized_seeded_text(self.description) if self.description else None
+
 class Transaction(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     buyer_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
@@ -802,6 +1168,10 @@ class Review(db.Model):
     target_user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
     reviewer = db.relationship('User', foreign_keys=[reviewer_id], backref='reviews_written')
+
+    @property
+    def localized_content(self):
+        return localized_seeded_text(self.content)
 
 class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -843,6 +1213,8 @@ def inject_chat_request_count():
     return {
         'pending_chat_request_count': pending_chat_request_count,
         't': tr,
+        'ui': ui_text,
+        'choice_label': choice_label,
         'current_locale': get_locale(),
         'supported_languages': SUPPORTED_LANGUAGES,
     }
@@ -957,16 +1329,6 @@ def render_marketplace():
 
     items_query = Item.query.outerjoin(Neighborhood).outerjoin(District)
 
-    if query:
-        like_query = f"%{query}%"
-        items_query = items_query.filter(
-            or_(
-                Item.title.ilike(like_query),
-                Item.description.ilike(like_query),
-                Item.category.ilike(like_query),
-            )
-        )
-
     if velayat_id:
         items_query = items_query.filter(District.velayat_id == velayat_id)
     if district_id:
@@ -975,6 +1337,22 @@ def render_marketplace():
         items_query = items_query.filter(Item.neighborhood_id == neighborhood_id)
 
     items = items_query.order_by(Item.id.desc()).all()
+    if query:
+        normalized_query = query.casefold()
+        items = [
+            item for item in items
+            if any(
+                normalized_query in (value or '').casefold()
+                for value in (
+                    item.title,
+                    item.description,
+                    item.localized_title,
+                    item.localized_description,
+                    item.category,
+                    choice_label('category', item.category),
+                )
+            )
+        ]
     location_tree = get_location_tree()
     selected_location = {
         "velayat_id": velayat_id,
@@ -1043,7 +1421,7 @@ def login():
             return redirect(url_for('index'))
         flash(tr('flash.invalid_login'))
     elif current_user.is_authenticated:
-        flash('Sign in below to switch to another account.')
+        flash(ui_text('flash.sign_in_switch'))
     return render_template('login.html')
 
 
@@ -1120,31 +1498,31 @@ def register():
         confirm_password = request.form.get('confirm_password') or ""
 
         if not region:
-            flash('Please select your region.')
+            flash(ui_text('flash.select_region'))
             return redirect(url_for('register'))
         if not full_name:
-            flash('Full name is required.')
+            flash(ui_text('flash.full_name_required'))
             return redirect(url_for('register'))
         if not age_value or not age_value.isdigit():
-            flash('Valid age is required.')
+            flash(ui_text('flash.valid_age_required'))
             return redirect(url_for('register'))
         if not email:
-            flash('Email is required.')
+            flash(ui_text('flash.email_required_general'))
             return redirect(url_for('register'))
         if len(password) < 6:
-            flash('Password must be at least 6 characters.')
+            flash(ui_text('flash.password_len'))
             return redirect(url_for('register'))
         if password != confirm_password:
-            flash('Passwords do not match.')
+            flash(ui_text('flash.passwords_no_match'))
             return redirect(url_for('register'))
 
         if User.query.filter_by(email=email).first():
-            flash('Email already exists')
+            flash(ui_text('flash.email_exists'))
             return redirect(url_for('register'))
 
         passport_data = request.form.get('passport_image')
         if not passport_data:
-            flash('Passport photo is required for KYC verification.')
+            flash(ui_text('flash.passport_required'))
             return redirect(url_for('register'))
 
         if not os.path.exists(app.config['UPLOAD_FOLDER']):
@@ -1155,7 +1533,7 @@ def register():
             passport_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             save_data_url_image(passport_data, passport_path)
         except ValueError:
-            flash('Invalid passport image. Please upload again.')
+            flash(ui_text('flash.invalid_passport'))
             return redirect(url_for('register'))
 
         parsed_age = int(age_value)
@@ -1174,7 +1552,7 @@ def register():
         db.session.commit()
         if current_user.is_authenticated:
             logout_user()
-        flash('Registration complete. We sent your information to admin. Your KYC status is processing.')
+        flash(ui_text('flash.registration_complete'))
         return redirect(url_for('login'))
     return render_template('register.html')
 
@@ -1190,7 +1568,7 @@ def upload():
             neighborhood = None
 
         if not neighborhood:
-            flash('Please select a valid neighborhood or street.')
+            flash(ui_text('flash.valid_neighborhood'))
             return redirect(url_for('upload'))
 
         file = request.files.get('item_image')
@@ -1240,11 +1618,11 @@ def buy_item(item_id):
     duration = request.args.get('duration', 1, type=int)
     
     if item.user_id == current_user.id:
-        flash("You cannot rent/buy your own item!")
+        flash(ui_text('flash.own_item'))
         return redirect(url_for('item_detail', item_id=item_id))
 
     if not item.is_available:
-        flash("This item is currently rented out.")
+        flash(ui_text('flash.item_rented'))
         return redirect(url_for('item_detail', item_id=item_id))
 
     price_val = parse_price(item.price)
@@ -1267,7 +1645,7 @@ def buy_item(item_id):
     )
     db.session.add(new_tx)
     db.session.commit()
-    flash("Rental request sent to the owner! Wait for their approval and meet to scan the QR code.")
+    flash(ui_text('flash.rental_request_sent'))
     return redirect(url_for('profile', user_id=current_user.id))
 
 @app.route('/negotiate/<int:item_id>', methods=['POST'])
@@ -1275,14 +1653,14 @@ def buy_item(item_id):
 def negotiate(item_id):
     item = Item.query.get_or_404(item_id)
     if item.user_id == current_user.id:
-        flash("You cannot negotiate with yourself!")
+        flash(ui_text('flash.negotiate_self'))
         return redirect(url_for('item_detail', item_id=item_id))
 
     duration = request.form.get('duration', 1, type=int)
     proposed_price = request.form.get('proposed_price', type=float)
 
     if not proposed_price:
-        flash("Please enter a proposed price.")
+        flash(ui_text('flash.enter_price'))
         return redirect(url_for('item_detail', item_id=item_id))
 
     rental_total = proposed_price * duration if item.type == 'rent' else proposed_price
@@ -1304,7 +1682,7 @@ def negotiate(item_id):
     )
     db.session.add(new_tx)
     db.session.commit()
-    flash("Negotiation request sent to the owner!")
+    flash(ui_text('flash.negotiation_sent'))
     return redirect(url_for('profile', user_id=current_user.id))
 
 @app.route('/accept_negotiation/<int:transaction_id>')
@@ -1312,12 +1690,12 @@ def negotiate(item_id):
 def accept_negotiation(transaction_id):
     tx = Transaction.query.get_or_404(transaction_id)
     if tx.seller_id != current_user.id:
-        flash("Unauthorized.")
+        flash(ui_text('flash.unauthorized'))
         return redirect(url_for('profile', user_id=current_user.id))
 
     tx.status = 'accepted'
     db.session.commit()
-    flash("Deal accepted! Show the QR code to the renter when you meet.")
+    flash(ui_text('flash.deal_accepted'))
     return redirect(url_for('profile', user_id=current_user.id))
 
 @app.route('/decline_negotiation/<int:transaction_id>')
@@ -1325,12 +1703,12 @@ def accept_negotiation(transaction_id):
 def decline_negotiation(transaction_id):
     tx = Transaction.query.get_or_404(transaction_id)
     if tx.seller_id != current_user.id and tx.buyer_id != current_user.id:
-        flash("Unauthorized.")
+        flash(ui_text('flash.unauthorized'))
         return redirect(url_for('profile', user_id=current_user.id))
 
     db.session.delete(tx)
     db.session.commit()
-    flash("Negotiation cancelled.")
+    flash(ui_text('flash.negotiation_cancelled'))
     return redirect(url_for('profile', user_id=current_user.id))
 
 @app.route('/confirm_deal/<int:transaction_id>')
@@ -1338,11 +1716,11 @@ def decline_negotiation(transaction_id):
 def confirm_deal(transaction_id):
     tx = Transaction.query.get_or_404(transaction_id)
     if tx.buyer_id != current_user.id:
-        flash("Only the renter can confirm the hand-off.")
+        flash(ui_text('flash.only_renter_confirm'))
         return redirect(url_for('index'))
     
     if tx.status != 'accepted':
-        flash("This deal is not ready for confirmation.")
+        flash(ui_text('flash.deal_not_ready'))
         return redirect(url_for('profile', user_id=current_user.id))
 
     # Calculate final amounts based on negotiated price
@@ -1350,7 +1728,7 @@ def confirm_deal(transaction_id):
     
     # SECURITY: Prevent unverified users from renting expensive items
     if price_val > 100 and current_user.kyc_status != 'verified':
-        flash("You must be a verified user to rent high-value items. Please wait for admin approval.")
+        flash(ui_text('flash.verified_required'))
         return redirect(url_for('profile', user_id=current_user.id))
 
     duration = tx.duration
@@ -1366,7 +1744,7 @@ def confirm_deal(transaction_id):
 def process_negotiated_payment(transaction_id):
     tx = Transaction.query.get_or_404(transaction_id)
     if tx.buyer_id != current_user.id:
-        flash("Unauthorized.")
+        flash(ui_text('flash.unauthorized'))
         return redirect(url_for('index'))
 
     # Recalculate to be sure
@@ -1378,7 +1756,7 @@ def process_negotiated_payment(transaction_id):
     total_val = rental_total + commission + deposit
 
     if current_user.wallet_balance < total_val:
-        flash("Insufficient funds!")
+        flash(ui_text('flash.insufficient_funds'))
         return redirect(url_for('confirm_deal', transaction_id=tx.id))
 
     try:
@@ -1403,11 +1781,11 @@ def process_negotiated_payment(transaction_id):
         tx.timestamp = datetime.utcnow()
         db.session.commit()
 
-        flash("Payment successful! HandShake is holding the deposit. Rental started!")
+        flash(ui_text('flash.payment_success'))
         return redirect(url_for('profile', user_id=current_user.id))
     except Exception as e:
         db.session.rollback()
-        flash("Transaction failed.")
+        flash(ui_text('flash.transaction_failed'))
         return redirect(url_for('confirm_deal', transaction_id=tx.id))
 
 
@@ -1417,11 +1795,11 @@ def return_item(transaction_id):
     # This route is used by the SELLER to confirm they got their item back
     tx = Transaction.query.get_or_404(transaction_id)
     if tx.seller_id != current_user.id:
-        flash("Only the owner can confirm return.")
+        flash(ui_text('flash.only_owner_return'))
         return redirect(url_for('dashboard'))
     
     if tx.status != 'active':
-        flash("Invalid action.")
+        flash(ui_text('flash.invalid_action'))
         return redirect(url_for('dashboard'))
 
     try:
@@ -1435,10 +1813,10 @@ def return_item(transaction_id):
         
         tx.status = 'returned'
         db.session.commit()
-        flash("Item return confirmed! Security deposit released back to the renter.")
+        flash(ui_text('flash.return_confirmed'))
     except:
         db.session.rollback()
-        flash("Error processing return.")
+        flash(ui_text('flash.return_error'))
     return redirect(url_for('dashboard'))
 
 @app.route('/profile/<int:user_id>')
@@ -1486,10 +1864,10 @@ def edit_profile():
         bio = (request.form.get('bio') or '').strip()
 
         if not full_name:
-            flash('Full name is required.')
+            flash(ui_text('flash.full_name_required'))
             return redirect(url_for('edit_profile'))
         if not region:
-            flash('Location is required.')
+            flash(ui_text('flash.location_required'))
             return redirect(url_for('edit_profile'))
 
         current_user.full_name = full_name
@@ -1526,14 +1904,14 @@ def send_chat_request(recipient_id):
     User.query.get_or_404(recipient_id)
 
     if recipient_id == current_user.id:
-        flash('You cannot chat-request yourself.')
+        flash(ui_text('flash.chat_self'))
         return redirect(url_for('profile', user_id=recipient_id))
 
     if BlockedUser.query.filter(
         ((BlockedUser.blocker_id == current_user.id) & (BlockedUser.blocked_id == recipient_id)) |
         ((BlockedUser.blocker_id == recipient_id) & (BlockedUser.blocked_id == current_user.id))
     ).first():
-        flash('Chat request unavailable because one of you is blocked.')
+        flash(ui_text('flash.chat_blocked'))
         return redirect(url_for('profile', user_id=recipient_id))
 
     state, existing = get_chat_connection_state(current_user.id, recipient_id)
@@ -1541,14 +1919,14 @@ def send_chat_request(recipient_id):
         req = ChatRequest(sender_id=current_user.id, recipient_id=recipient_id)
         db.session.add(req)
         db.session.commit()
-        flash('Chat request sent!')
+        flash(ui_text('flash.chat_request_sent'))
     elif state == 'accepted':
-        flash('You already have an active chat with this user.')
+        flash(ui_text('flash.chat_active_exists'))
         return redirect(url_for('chat', recipient_id=recipient_id))
     elif state == 'outgoing_pending':
-        flash('Chat request already exists.')
+        flash(ui_text('flash.chat_request_exists'))
     else:
-        flash('This user already sent you a request. Open Messages to accept it.')
+        flash(ui_text('flash.chat_request_incoming'))
         return redirect(url_for('chat', tab='requests'))
     return redirect(url_for('profile', user_id=recipient_id))
 
@@ -1560,7 +1938,7 @@ def accept_chat_request(request_id):
         req.status = 'accepted'
         db.session.commit()
         return redirect(url_for('chat', recipient_id=req.sender_id))
-    flash('This chat request is no longer available.')
+    flash(ui_text('flash.chat_request_unavailable'))
     return redirect(url_for('chat'))
 
 @app.route('/reject-chat-request/<int:request_id>')
@@ -1572,14 +1950,14 @@ def reject_chat_request(request_id):
         db.session.delete(req)
         db.session.commit()
     else:
-        flash('This chat request is no longer available.')
+        flash(ui_text('flash.chat_request_unavailable'))
     return redirect(url_for('chat'))
 
 @app.route('/block-user/<int:user_id>')
 @login_required
 def block_user(user_id):
     if user_id == current_user.id:
-        flash('You cannot block yourself.')
+        flash(ui_text('flash.block_self'))
         return redirect(url_for('profile', user_id=current_user.id))
 
     existing = BlockedUser.query.filter_by(blocker_id=current_user.id, blocked_id=user_id).first()
@@ -1592,7 +1970,7 @@ def block_user(user_id):
             ((ChatRequest.sender_id == user_id) & (ChatRequest.recipient_id == current_user.id))
         ).delete()
         db.session.commit()
-        flash('User blocked.')
+    flash(ui_text('flash.user_blocked'))
     return redirect(url_for('index'))
 
 @app.route('/unblock-user/<int:user_id>')
@@ -1600,7 +1978,7 @@ def block_user(user_id):
 def unblock_user(user_id):
     BlockedUser.query.filter_by(blocker_id=current_user.id, blocked_id=user_id).delete()
     db.session.commit()
-    flash('User unblocked.')
+    flash(ui_text('flash.user_unblocked'))
     return redirect(url_for('profile', user_id=user_id))
 
 @app.route('/chat')
@@ -1649,13 +2027,13 @@ def chat(recipient_id=None):
             ).order_by(Message.timestamp.asc()).all()
             initial_tab = 'chats'
         elif state == 'incoming_pending':
-            flash("This user requested to chat with you. Accept it in Requests first.")
+            flash(ui_text('flash.accept_request_first'))
             return redirect(url_for('chat', tab='requests'))
         elif state == 'outgoing_pending':
-            flash("Your chat request is still pending approval.")
+            flash(ui_text('flash.request_pending'))
             return redirect(url_for('chat'))
         else:
-            flash("Send a chat request first before messaging this user.")
+            flash(ui_text('flash.send_request_first'))
             return redirect(url_for('profile', user_id=recipient_id))
 
     if initial_tab == 'chats' and not active_recipient and pending_requests and not active_chat_users:
@@ -1679,7 +2057,7 @@ def send_message():
     try:
         recipient_id = int(recipient_id)
     except (TypeError, ValueError):
-        flash("Invalid message recipient.")
+        flash(ui_text('flash.invalid_recipient'))
         return redirect(url_for('chat'))
     
     # Check if either side has blocked the other.
@@ -1687,11 +2065,11 @@ def send_message():
         ((BlockedUser.blocker_id == recipient_id) & (BlockedUser.blocked_id == current_user.id)) |
         ((BlockedUser.blocker_id == current_user.id) & (BlockedUser.blocked_id == recipient_id))
     ).first():
-        flash("Messaging is unavailable because one of you is blocked.")
+        flash(ui_text('flash.messaging_blocked'))
         return redirect(url_for('chat'))
 
     if not has_accepted_chat_between(current_user.id, recipient_id):
-        flash("You need an accepted chat request before sending messages.")
+        flash(ui_text('flash.accepted_chat_required'))
         return redirect(url_for('profile', user_id=recipient_id))
 
     if recipient_id and body:
@@ -1718,10 +2096,10 @@ def rate_item(item_id):
     rating = int(request.form.get('rating') or 0)
     content = (request.form.get('content') or '').strip()
     if rating < 1 or rating > 5:
-        flash('Rating must be between 1 and 5.')
+        flash(ui_text('flash.rating_range'))
         return redirect(url_for('item_detail', item_id=item_id))
     if not content:
-        flash('Review cannot be empty.')
+        flash(ui_text('flash.review_empty'))
         return redirect(url_for('item_detail', item_id=item_id))
     review = Review(content=content, rating=rating, reviewer_id=current_user.id, item_id=item_id)
     item.rating = (item.rating * item.num_ratings + rating) / (item.num_ratings + 1)

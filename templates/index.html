@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}HandShake | Home{% endblock %}
+{% block title %}HandShake | {{ t('nav.marketplace') }}{% endblock %}
 
 {% block content %}
 <div
@@ -9,28 +9,28 @@
     {% if expert_query %}data-expert-query="{{ expert_query }}"{% endif %}
 >
     <div class="ai-expert-header">
-        <span class="ai-expert-eyebrow">Live Expert</span>
+        <span class="ai-expert-eyebrow">{{ ui('market.ai_title') }}</span>
         <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px;">
-            <h3>Ask AI about this search</h3>
+            <h3>{{ ui('market.ai_heading') }}</h3>
             <button type="button" id="ai-expert-close" class="ai-expert-close" aria-label="Close AI chat">
                 <i class="fas fa-times"></i>
             </button>
         </div>
     </div>
-    <div class="ai-expert-status">Nothing runs until you ask.</div>
+    <div class="ai-expert-status">{{ ui('market.ai_idle') }}</div>
     <div class="ai-expert-actions">
-        <button type="button" class="ai-quick-action" data-expert-question="Teach me what to check for in these results.">Learn these results</button>
-        <button type="button" class="ai-quick-action" data-expert-question="How should I set up or inspect an item like this?">Setup help</button>
+        <button type="button" class="ai-quick-action" data-expert-question="Teach me what to check for in these results.">{{ ui('market.ai_learn') }}</button>
+        <button type="button" class="ai-quick-action" data-expert-question="How should I set up or inspect an item like this?">{{ ui('market.ai_setup') }}</button>
     </div>
     <div class="ai-chat-thread" id="ai-chat-thread"></div>
     <form id="ai-expert-form" class="ai-expert-form">
-        <input id="ai-expert-input" type="text" placeholder="Ask about setup, inspection, or usage" {% if not expert_query %}disabled{% endif %}>
-        <button type="submit" class="auth-btn" {% if not expert_query %}disabled{% endif %}>Ask AI</button>
+        <input id="ai-expert-input" type="text" placeholder="{{ ui('market.ai_input') }}" {% if not expert_query %}disabled{% endif %}>
+        <button type="submit" class="auth-btn" {% if not expert_query %}disabled{% endif %}>{{ ui('market.ai_button') }}</button>
     </form>
 </div>
 
 {% if expert_query %}
-<button type="button" id="ai-expert-launcher" class="ai-expert-launcher">AI chat</button>
+<button type="button" id="ai-expert-launcher" class="ai-expert-launcher">{{ ui('market.ai_launcher') }}</button>
 {% endif %}
 
 <div id="cyber-grid-overlay" class="cyber-grid-overlay"></div>
@@ -41,46 +41,40 @@
     <div class="categories-scroll">
         <div class="category-item active" data-category="all">
             <div class="category-icon"><i class="fas fa-th"></i></div>
-            <div class="category-label">All Items</div>
+            <div class="category-label">{{ ui('market.category_all') }}</div>
         </div>
         <div class="category-item" data-category="hobbies">
             <div class="category-icon"><i class="fas fa-icons"></i></div>
-            <div class="category-label">Hobbies</div>
+            <div class="category-label">{{ choice_label('category', 'hobbies') }}</div>
         </div>
         <div class="category-item" data-category="tech">
             <div class="category-icon"><i class="fas fa-laptop"></i></div>
-            <div class="category-label">Tech</div>
+            <div class="category-label">{{ choice_label('category', 'tech') }}</div>
         </div>
         <div class="category-item" data-category="cars">
             <div class="category-icon"><i class="fas fa-car"></i></div>
-            <div class="category-label">Cars</div>
+            <div class="category-label">{{ choice_label('category', 'cars') }}</div>
         </div>
         <div class="category-item" data-category="houses">
             <div class="category-icon"><i class="fas fa-home"></i></div>
-            <div class="category-label">Houses</div>
+            <div class="category-label">{{ choice_label('category', 'houses') }}</div>
         </div>
         <div class="category-item" data-category="tools">
             <div class="category-icon"><i class="fas fa-tools"></i></div>
-            <div class="category-label">Tools</div>
+            <div class="category-label">{{ choice_label('category', 'tools') }}</div>
         </div>
         <div class="category-item" data-category="books">
             <div class="category-icon"><i class="fas fa-book"></i></div>
-            <div class="category-label">Books</div>
+            <div class="category-label">{{ choice_label('category', 'books') }}</div>
         </div>
     </div>
 </div>
 
 <section id="market-search-panel" class="market-search-panel-wrap">
     <div class="market-search-panel">
-        <div class="market-search-panel-head">
-            <h2>{{ t('market.title') }}</h2>
-            <p>{{ t('market.subtitle') }}</p>
-        </div>
+        <div id="market-filter-body" class="market-filter-body" hidden>
         <form action="{{ url_for('search') }}" method="GET" class="market-filter-form">
-            <div class="market-field market-field-query">
-                <label for="market-q">{{ t('market.keyword') }}</label>
-                <input id="market-q" type="text" name="q" value="{{ search_query or '' }}" placeholder="{{ t('market.keyword_placeholder') }}">
-            </div>
+            <input type="hidden" name="q" value="{{ search_query or '' }}">
             <div class="market-field">
                 <label for="velayat-filter-main">{{ t('market.velayat') }}</label>
                 <select id="velayat-filter-main" name="velayat_id">
@@ -107,6 +101,7 @@
                 <a href="{{ url_for('index') }}" class="market-search-clear">{{ t('market.clear') }}</a>
             </div>
         </form>
+        </div>
         <div class="market-search-result-meta">
             {% set listing_suffix = '' %}
             {% if current_locale == 'en' and items|length != 1 %}
@@ -125,14 +120,14 @@
     {% for item in items %}
     <a href="{{ url_for('item_detail', item_id=item.id) }}" class="hs-card" data-category="{{ item.category }}" style="text-decoration: none; color: inherit;">
         <div class="card-img-wrapper">
-            <span class="badge">{{ item.type.upper() }}</span>
-            <img src="{{ item.image_url or 'https://images.unsplash.com/photo-1555685812-4b943f1cb0eb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=60' }}" alt="{{ item.title }}">
+            <span class="badge">{{ choice_label('type', item.type) }}</span>
+            <img src="{{ item.image_url or 'https://images.unsplash.com/photo-1555685812-4b943f1cb0eb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=60' }}" alt="{{ item.localized_title }}">
         </div>
         <div class="card-content">
-            <h3>{{ item.title }}</h3>
+            <h3>{{ item.localized_title }}</h3>
             <p class="location">{{ item.location_label }}</p>
             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
-                <p class="price">{{ item.price }} TMT {% if item.type == 'rent' %}<span>/ {{ 'hr' if item.price_unit == 'hour' else 'day' }}</span>{% endif %}</p>
+                <p class="price">{{ item.price }} TMT {% if item.type == 'rent' %}<span>/ {{ ui('market.per_hour') if item.price_unit == 'hour' else ui('market.per_day') }}</span>{% endif %}</p>
                 <span style="font-size: 0.8rem; color: var(--text-secondary);"><i class="fas fa-star" style="color: #f59e0b;"></i> {{ "%.1f"|format(item.rating) }}</span>
             </div>
         </div>
@@ -148,12 +143,20 @@
 document.addEventListener('DOMContentLoaded', () => {
     const locationTree = {{ location_tree|tojson }};
     const selectedLocation = {{ selected_location|tojson }};
+    const filterToggle = document.getElementById('market-filter-toggle');
+    const filterBody = document.getElementById('market-filter-body');
     const velayatSelect = document.getElementById('velayat-filter-main');
     const districtSelect = document.getElementById('district-filter-main');
     const neighborhoodSelect = document.getElementById('neighborhood-filter-main');
-    if (!velayatSelect || !districtSelect || !neighborhoodSelect) {
+    if (!filterToggle || !filterBody || !velayatSelect || !districtSelect || !neighborhoodSelect) {
         return;
     }
+
+    filterToggle.addEventListener('click', () => {
+        const nextExpanded = filterToggle.getAttribute('aria-expanded') !== 'true';
+        filterToggle.setAttribute('aria-expanded', nextExpanded ? 'true' : 'false');
+        filterBody.hidden = !nextExpanded;
+    });
 
     function populateSelect(select, options, placeholder, selectedValue) {
         select.innerHTML = '';

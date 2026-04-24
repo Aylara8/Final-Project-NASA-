@@ -1,35 +1,35 @@
 {% extends "base.html" %}
 
-{% block title %}HandShake | {{ item.title }}{% endblock %}
+{% block title %}HandShake | {{ item.localized_title }}{% endblock %}
 
 {% block content %}
 <div
     id="ai-expert-sidebar"
     class="ai-expert-sidebar"
-    data-expert-query="{{ item.title }}. {{ item.description or '' }}"
+    data-expert-query="{{ item.localized_title }}. {{ item.localized_description or '' }}"
 >
     <div class="ai-expert-header">
-        <span class="ai-expert-eyebrow">Live Expert</span>
+        <span class="ai-expert-eyebrow">{{ ui('market.ai_title') }}</span>
         <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px;">
-            <h3>Ask how to learn or set it up</h3>
+            <h3>{{ ui('detail.ai_heading') }}</h3>
             <button type="button" id="ai-expert-close" class="ai-expert-close" aria-label="Close AI chat">
                 <i class="fas fa-times"></i>
             </button>
         </div>
     </div>
-    <div class="ai-expert-status">Nothing runs until you ask.</div>
+    <div class="ai-expert-status">{{ ui('market.ai_idle') }}</div>
     <div class="ai-expert-actions">
-        <button type="button" class="ai-quick-action" data-expert-question="Teach me the basics of this item.">Learn this item</button>
-        <button type="button" class="ai-quick-action" data-expert-question="How do I set up this item safely?">How to set it up</button>
+        <button type="button" class="ai-quick-action" data-expert-question="Teach me the basics of this item.">{{ ui('detail.ai_learn') }}</button>
+        <button type="button" class="ai-quick-action" data-expert-question="How do I set up this item safely?">{{ ui('detail.ai_setup') }}</button>
     </div>
     <div class="ai-chat-thread" id="ai-chat-thread"></div>
     <form id="ai-expert-form" class="ai-expert-form">
-        <input id="ai-expert-input" type="text" placeholder="Ask about setup, usage, or first steps">
-        <button type="submit" class="auth-btn">Ask AI</button>
+        <input id="ai-expert-input" type="text" placeholder="{{ ui('market.ai_input') }}">
+        <button type="submit" class="auth-btn">{{ ui('market.ai_button') }}</button>
     </form>
 </div>
 
-<button type="button" id="ai-expert-launcher" class="ai-expert-launcher">AI chat</button>
+<button type="button" id="ai-expert-launcher" class="ai-expert-launcher">{{ ui('market.ai_launcher') }}</button>
 
 <div id="cyber-grid-overlay" class="cyber-grid-overlay"></div>
 <div id="magic-notes-layer" class="magic-notes-layer"></div>
@@ -43,12 +43,12 @@
     <div>
         <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
             <div>
-                <h1 style="font-size: 2rem; font-weight: 800; line-height: 1.2;">{{ item.title }}</h1>
-                <p style="color: var(--text-secondary); margin-top: 8px;"><i class="fas fa-map-marker-alt"></i> {{ item.location_label }} | {{ item.category|capitalize }}</p>
+                <h1 style="font-size: 2rem; font-weight: 800; line-height: 1.2;">{{ item.localized_title }}</h1>
+                <p style="color: var(--text-secondary); margin-top: 8px;"><i class="fas fa-map-marker-alt"></i> {{ item.location_label }} | {{ choice_label('category', item.category) }}</p>
             </div>
             <div style="text-align: right;">
                 <div style="font-size: 1.5rem; font-weight: 800; color: var(--accent);">{{ item.price }} TMT</div>
-                <div style="color: var(--text-secondary); font-size: 0.9rem;">per {{ 'item' if item.type == 'sell' else ('hr' if item.price_unit == 'hour' else 'day') }}</div>
+                <div style="color: var(--text-secondary); font-size: 0.9rem;">{{ choice_label('type', item.type) }}{% if item.type == 'rent' %} / {{ ui('market.per_hour') if item.price_unit == 'hour' else ui('market.per_day') }}{% endif %}</div>
             </div>
         </div>
 
@@ -64,17 +64,17 @@
 
                 {% if item.owner %}
                 <div>
-                    <div style="font-weight: 700;">Hosted by <a href="{{ url_for('profile', user_id=item.owner.id) }}" style="color: var(--accent);">{{ item.owner.full_name or item.owner.username }}</a></div>
+                    <div style="font-weight: 700;">{{ ui('detail.hosted_by') }} <a href="{{ url_for('profile', user_id=item.owner.id) }}" style="color: var(--accent);">{{ item.owner.full_name or item.owner.username }}</a></div>
                     <div style="font-size: 0.85rem; color: var(--text-secondary);"><i class="fas fa-star"></i> {{ "%.1f"|format(item.owner.rating) }} rating</div>
                 </div>
                 {% if current_user.is_authenticated and current_user.id != item.owner.id %}
                     <div style="display: flex; flex-direction: column; gap: 8px; margin-left: auto; width: 220px;">
                         {% if item.type == 'rent' %}
                         <div style="margin-bottom: 4px;">
-                            <label style="font-size: 0.75rem; font-weight: 700; color: var(--text-secondary);">Duration ({{ 'hrs' if item.price_unit == 'hour' else 'days' }})</label>
+                            <label style="font-size: 0.75rem; font-weight: 700; color: var(--text-secondary);">{{ ui('detail.duration') }} ({{ ui('market.per_hour') if item.price_unit == 'hour' else ui('market.per_day') }})</label>
                             <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px;">
                                 <input type="number" id="rental-duration" value="1" min="1" max="100" style="width: 60px; padding: 6px; border-radius: 6px; border: 1px solid var(--border); background: var(--bg); color: var(--text-primary);">
-                                <span style="font-size: 0.85rem; font-weight: 700; color: var(--accent);">Total: <span id="dynamic-total">{{ item.price }}</span> TMT</span>
+                                <span style="font-size: 0.85rem; font-weight: 700; color: var(--accent);">{{ ui('detail.total') }}: <span id="dynamic-total">{{ item.price }}</span> TMT</span>
                             </div>
                         </div>
                         <script>
@@ -87,20 +87,20 @@
                         </script>
                         {% endif %}
                         <a href="{{ url_for('buy_item', item_id=item.id) }}{% if item.type == 'rent' %}?duration=1{% endif %}" id="buy-link" style="background: var(--accent); color: white; border: none; padding: 10px 24px; border-radius: 8px; font-weight: 800; font-size: 0.95rem; text-align: center; text-decoration: none;">
-                            {% if item.type == 'rent' %}Rent Now{% else %}Buy Now{% endif %}
+                            {% if item.type == 'rent' %}{{ ui('detail.rent_now') }}{% else %}{{ ui('detail.buy_now') }}{% endif %}
                         </a>
 
                         <button type="button" id="open-negotiate" style="background: var(--bg); border: 1px solid var(--border); padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; text-align: center; text-decoration: none; cursor: pointer;">
-                            <i class="fas fa-handshake"></i> Negotiate Price
+                            <i class="fas fa-handshake"></i> {{ ui('detail.negotiate') }}
                         </button>
 
                         <div id="negotiate-panel" style="display: none; margin-top: 10px; padding: 15px; border: 1px solid var(--border); border-radius: 12px; background: #f8fafc;">
                             <form action="{{ url_for('negotiate', item_id=item.id) }}" method="POST">
-                                <label style="display: block; font-size: 0.75rem; font-weight: 700; margin-bottom: 4px;">Proposed Price (TMT)</label>
+                                <label style="display: block; font-size: 0.75rem; font-weight: 700; margin-bottom: 4px;">{{ ui('detail.proposed_price') }}</label>
                                 <input type="number" step="0.01" name="proposed_price" value="{{ item.price }}" required style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid var(--border); margin-bottom: 10px;">
-                                <label style="display: block; font-size: 0.75rem; font-weight: 700; margin-bottom: 4px;">Duration ({{ 'hrs' if item.price_unit == 'hour' else 'days' }})</label>
+                                <label style="display: block; font-size: 0.75rem; font-weight: 700; margin-bottom: 4px;">{{ ui('detail.duration') }} ({{ ui('market.per_hour') if item.price_unit == 'hour' else ui('market.per_day') }})</label>
                                 <input type="number" name="duration" id="negotiate-duration" value="1" min="1" required style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid var(--border); margin-bottom: 12px;">
-                                <button type="submit" class="auth-btn" style="width: 100%; font-size: 0.85rem; padding: 10px;">Send Offer</button>
+                                <button type="submit" class="auth-btn" style="width: 100%; font-size: 0.85rem; padding: 10px;">{{ ui('detail.send_offer') }}</button>
                             </form>
                         </div>
 
@@ -115,36 +115,36 @@
                         </script>
                         
                         {% if chat_state == 'accepted' %}
-                        <a href="{{ url_for('chat', recipient_id=item.owner.id) }}" style="background: var(--bg); border: 1px solid var(--border); padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; text-align: center; text-decoration: none;">Open Chat</a>
+                        <a href="{{ url_for('chat', recipient_id=item.owner.id) }}" style="background: var(--bg); border: 1px solid var(--border); padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; text-align: center; text-decoration: none;">{{ ui('detail.open_chat') }}</a>
                         {% elif chat_state == 'outgoing_pending' %}
-                        <a href="{{ url_for('profile', user_id=item.owner.id) }}" style="background: var(--bg); border: 1px solid var(--border); padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; text-align: center; text-decoration: none;">Request Pending</a>
+                        <a href="{{ url_for('profile', user_id=item.owner.id) }}" style="background: var(--bg); border: 1px solid var(--border); padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; text-align: center; text-decoration: none;">{{ ui('detail.request_pending') }}</a>
                         {% elif chat_state == 'incoming_pending' and chat_request %}
-                        <a href="{{ url_for('accept_chat_request', request_id=chat_request.id) }}" style="background: var(--bg); border: 1px solid var(--border); padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; text-align: center; text-decoration: none;">Accept Chat Request</a>
+                        <a href="{{ url_for('accept_chat_request', request_id=chat_request.id) }}" style="background: var(--bg); border: 1px solid var(--border); padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; text-align: center; text-decoration: none;">{{ ui('detail.accept_chat_request') }}</a>
                         {% else %}
-                        <a href="{{ url_for('send_chat_request', recipient_id=item.owner.id) }}" style="background: var(--bg); border: 1px solid var(--border); padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; text-align: center; text-decoration: none;">Request Chat</a>
+                        <a href="{{ url_for('send_chat_request', recipient_id=item.owner.id) }}" style="background: var(--bg); border: 1px solid var(--border); padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; text-align: center; text-decoration: none;">{{ ui('detail.request_chat') }}</a>
                         {% endif %}
                     </div>
                 {% endif %}
                 {% else %}
                 <div>
-                    <div style="font-weight: 700;">Hosted by Unknown user</div>
-                    <div style="font-size: 0.85rem; color: var(--text-secondary);">Owner account is unavailable</div>
+                    <div style="font-weight: 700;">{{ ui('detail.unknown_owner') }}</div>
+                    <div style="font-size: 0.85rem; color: var(--text-secondary);">{{ ui('detail.owner_unavailable') }}</div>
                 </div>
                 {% endif %}
             </div>
             <div style="border-top: 1px solid var(--border); padding-top: 16px;">
-                <h3 style="font-weight: 800; font-size: 1rem; margin-bottom: 8px;">Description</h3>
-                <p style="color: var(--text-secondary); line-height: 1.6;">{{ item.description or "No description provided." }}</p>
+                <h3 style="font-weight: 800; font-size: 1rem; margin-bottom: 8px;">{{ ui('detail.description') }}</h3>
+                <p style="color: var(--text-secondary); line-height: 1.6;">{{ item.localized_description or ui('detail.no_description') }}</p>
             </div>
         </div>
 
         <div style="padding: 24px; border: 1px solid var(--border); border-radius: 12px; background: var(--card-bg);">
-            <h3 style="font-weight: 800; font-size: 1.1rem; margin-bottom: 16px;">Product Reviews ({{ "%.1f"|format(item.rating) }} <i class="fas fa-star" style="color: #f59e0b;"></i>)</h3>
+            <h3 style="font-weight: 800; font-size: 1.1rem; margin-bottom: 16px;">{{ ui('detail.reviews_title') }} ({{ "%.1f"|format(item.rating) }} <i class="fas fa-star" style="color: #f59e0b;"></i>)</h3>
             
             {% if current_user.is_authenticated and item.owner and current_user.id != item.owner.id %}
             <form action="{{ url_for('rate_item', item_id=item.id) }}" method="POST" style="margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid var(--border);">
                 <div style="margin-bottom: 12px;">
-                    <label style="font-weight: 700; font-size: 0.9rem;">Your Rating (1-5)</label>
+                    <label style="font-weight: 700; font-size: 0.9rem;">{{ ui('detail.your_rating') }}</label>
                     <div style="display: flex; gap: 10px; margin-top: 8px;">
                         {% for i in range(1, 6) %}
                         <input type="radio" name="rating" value="{{ i }}" id="star{{ i }}" required style="display: none;">
@@ -152,8 +152,8 @@
                         {% endfor %}
                     </div>
                 </div>
-                <textarea name="content" placeholder="Share your experience with this item..." required style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--text-primary); margin-bottom: 12px;"></textarea>
-                <button type="submit" class="auth-btn" style="width: 100%;">Submit Review</button>
+                <textarea name="content" placeholder="{{ ui('detail.review_placeholder') }}" required style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--text-primary); margin-bottom: 12px;"></textarea>
+                <button type="submit" class="auth-btn" style="width: 100%;">{{ ui('detail.submit_review') }}</button>
             </form>
             {% endif %}
 
@@ -164,10 +164,10 @@
                         <span style="font-weight: 700;">{{ review.reviewer.username }}</span>
                         <span style="color: #f59e0b;"><i class="fas fa-star"></i> {{ review.rating }}</span>
                     </div>
-                    <p style="font-size: 0.85rem; color: var(--text-secondary);">{{ review.content }}</p>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary);">{{ review.localized_content }}</p>
                 </div>
                 {% else %}
-                <p style="color: var(--text-secondary); text-align: center; padding: 20px;">No reviews for this product yet.</p>
+                <p style="color: var(--text-secondary); text-align: center; padding: 20px;">{{ ui('detail.no_reviews') }}</p>
                 {% endfor %}
             </div>
         </div>

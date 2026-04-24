@@ -1,57 +1,57 @@
 {% extends "base.html" %}
 
-{% block title %}HandShake | Post Item{% endblock %}
+{% block title %}HandShake | {{ ui('upload.page_title') }}{% endblock %}
 
 {% block content %}
 <div class="auth-container" style="max-width: 600px; margin: 40px auto;">
     <div class="auth-header">
-        <h2 style="font-weight: 800; font-size: 1.8rem;">List your item</h2>
-        <p style="color: var(--text-secondary);">Fill in the details to start renting.</p>
+        <h2 style="font-weight: 800; font-size: 1.8rem;">{{ ui('upload.title') }}</h2>
+        <p style="color: var(--text-secondary);">{{ ui('upload.subtitle') }}</p>
     </div>
     
     <form class="auth-form" action="/upload" method="POST" enctype="multipart/form-data" id="upload-form">
         <div class="form-group">
-            <label style="font-weight: 700;">What are you listing?</label>
-            <input type="text" name="title" placeholder="e.g. PlayStation 5, Canon EOS R5" required>
+            <label style="font-weight: 700;">{{ ui('upload.what_listing') }}</label>
+            <input type="text" name="title" placeholder="{{ ui('upload.title_placeholder') }}" required>
         </div>
         
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
             <div class="form-group">
-                <label style="font-weight: 700;">Category</label>
+                <label style="font-weight: 700;">{{ ui('upload.category') }}</label>
                 <select name="category" required>
-                    <option value="hobbies">Hobbies</option>
-                    <option value="tech">Tech</option>
-                    <option value="cars">Cars</option>
-                    <option value="houses">Houses</option>
-                    <option value="tools">Tools</option>
-                    <option value="books">Books</option>
+                    <option value="hobbies">{{ choice_label('category', 'hobbies') }}</option>
+                    <option value="tech">{{ choice_label('category', 'tech') }}</option>
+                    <option value="cars">{{ choice_label('category', 'cars') }}</option>
+                    <option value="houses">{{ choice_label('category', 'houses') }}</option>
+                    <option value="tools">{{ choice_label('category', 'tools') }}</option>
+                    <option value="books">{{ choice_label('category', 'books') }}</option>
                 </select>
             </div>
             <div class="form-group">
-                <label style="font-weight: 700;">Type</label>
+                <label style="font-weight: 700;">{{ ui('upload.type') }}</label>
                 <select name="type">
-                    <option value="rent">Rent</option>
-                    <option value="sell">Sell</option>
-                    <option value="exchange">Exchange</option>
+                    <option value="rent">{{ choice_label('type', 'rent') }}</option>
+                    <option value="sell">{{ choice_label('type', 'sell') }}</option>
+                    <option value="exchange">{{ choice_label('type', 'exchange') }}</option>
                 </select>
             </div>
         </div>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
             <div class="form-group">
-                <label style="font-weight: 700;">Price (TMT)</label>
+                <label style="font-weight: 700;">{{ ui('upload.price') }}</label>
                 <div style="display: flex; gap: 8px;">
                     <input type="number" name="price" placeholder="0" required style="flex: 2;">
                     <select name="price_unit" id="price-unit-select" style="flex: 1; {% if request.form.get('type') != 'rent' %}display: none;{% endif %}">
-                        <option value="day">/ day</option>
-                        <option value="hour">/ hr</option>
+                        <option value="day">/ {{ ui('market.per_day') }}</option>
+                        <option value="hour">/ {{ ui('market.per_hour') }}</option>
                     </select>
                 </div>
             </div>
             <div class="form-group">
-                <label style="font-weight: 700;">Velayat / City</label>
+                <label style="font-weight: 700;">{{ ui('upload.velayat_city') }}</label>
                 <select id="upload-velayat" required>
-                    <option value="">Select velayat</option>
+                    <option value="">{{ ui('upload.select_velayat') }}</option>
                     {% for velayat in location_tree %}
                     <option value="{{ velayat.id }}">{{ velayat.name }}</option>
                     {% endfor %}
@@ -61,27 +61,27 @@
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
             <div class="form-group">
-                <label style="font-weight: 700;">District</label>
+                <label style="font-weight: 700;">{{ ui('upload.district') }}</label>
                 <select id="upload-district" required>
-                    <option value="">Select district</option>
+                    <option value="">{{ ui('upload.select_district') }}</option>
                 </select>
             </div>
             <div class="form-group">
-                <label style="font-weight: 700;">Neighborhood / Street</label>
+                <label style="font-weight: 700;">{{ ui('upload.neighborhood') }}</label>
                 <select name="neighborhood_id" id="upload-neighborhood" required>
-                    <option value="">Select neighborhood or street</option>
+                    <option value="">{{ ui('upload.select_neighborhood') }}</option>
                 </select>
             </div>
         </div>
 
         <div class="form-group">
-            <label style="font-weight: 700;">Description</label>
-            <textarea name="description" placeholder="Tell us more about the item..." style="min-height: 100px;"></textarea>
+            <label style="font-weight: 700;">{{ ui('upload.description') }}</label>
+            <textarea name="description" placeholder="{{ ui('upload.description_placeholder') }}" style="min-height: 100px;"></textarea>
         </div>
 
         <!-- Photo Section with Stable Container -->
         <div class="form-group" style="margin-top: 10px;">
-            <label style="font-weight: 700;">Item Photo</label>
+            <label style="font-weight: 700;">{{ ui('upload.photo') }}</label>
             
             <div id="preview-container" class="image-preview-wrapper">
                 <i id="pfp-placeholder" class="fas fa-camera" style="font-size: 3rem; color: var(--text-secondary); opacity: 0.3;"></i>
@@ -91,31 +91,31 @@
                     <video id="video" autoplay playsinline style="width: 100%; height: 100%; object-fit: cover;"></video>
                     <canvas id="canvas" style="display: none;"></canvas>
                     <button type="button" id="capture-btn" class="auth-btn" style="position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); padding: 10px 20px; font-size: 0.8rem; background: rgba(16, 185, 129, 0.9);">
-                        Capture
+                        {{ ui('upload.capture') }}
                     </button>
                 </div>
             </div>
 
             <div id="upload-controls" style="display: flex; gap: 10px;">
                 <button type="button" id="start-camera" class="auth-btn" style="flex: 1; background: white; color: black; border: 1px solid var(--border); font-size: 0.9rem;">
-                    <i class="fas fa-camera"></i> Use Camera
+                    <i class="fas fa-camera"></i> {{ ui('upload.use_camera') }}
                 </button>
                 <div style="flex: 1; position: relative; overflow: hidden;">
                     <button type="button" class="auth-btn" style="width: 100%; background: #f3f4f6; color: black; border: 1px solid var(--border); font-size: 0.9rem;">
-                        <i class="fas fa-file-upload"></i> Upload File
+                        <i class="fas fa-file-upload"></i> {{ ui('upload.file_upload') }}
                     </button>
                     <input type="file" name="item_image" id="item_image" accept="image/*" style="position: absolute; top: 0; left: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer;">
                 </div>
             </div>
             
             <button type="button" id="reset-photo" style="display: none; margin-top: 10px; background: none; border: none; color: #ef4444; font-size: 0.85rem; font-weight: 600; cursor: pointer; text-align: center; width: 100%;">
-                <i class="fas fa-redo"></i> Change Photo
+                <i class="fas fa-redo"></i> {{ ui('upload.change_photo') }}
             </button>
             
             <input type="hidden" name="camera_image" id="camera_image">
         </div>
 
-        <button type="submit" class="auth-btn" style="margin-top: 25px; width: 100%; padding: 16px;">Post to Marketplace</button>
+        <button type="submit" class="auth-btn" style="margin-top: 25px; width: 100%; padding: 16px;">{{ ui('upload.submit') }}</button>
     </form>
 </div>
 
@@ -156,7 +156,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function syncDistricts() {
         const velayat = locationTree.find((entry) => String(entry.id) === velayatSelect.value);
         const districts = velayat ? velayat.districts : [];
-        populateSelect(districtSelect, districts, 'Select district');
+        populateSelect(districtSelect, districts, '{{ ui("upload.select_district") }}');
         syncNeighborhoods();
     }
 
@@ -167,8 +167,8 @@ document.addEventListener('DOMContentLoaded', () => {
             : null;
         const neighborhoods = district ? district.neighborhoods : [];
         const placeholderText = velayat && velayat.name === 'Ashgabat'
-            ? 'Select street or avenue'
-            : 'Select neighborhood';
+            ? '{{ ui("upload.select_street") }}'
+            : '{{ ui("upload.select_neighborhood") }}';
         populateSelect(neighborhoodSelect, neighborhoods, placeholderText);
     }
 
@@ -194,7 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
             cameraArea.style.display = 'block';
             placeholder.style.display = 'none';
         } catch (err) {
-            alert("Camera access denied.");
+            alert('{{ ui("upload.camera_denied") }}');
         }
     }
 

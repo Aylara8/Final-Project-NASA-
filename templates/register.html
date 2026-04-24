@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}HandShake | KYC Registration{% endblock %}
+{% block title %}HandShake | {{ ui('register.page_title') }}{% endblock %}
 
 {% block content %}
 <div class="auth-container" style="max-width: 550px;">
@@ -16,8 +16,8 @@
             <div class="step-line"></div>
             <div class="step step-5">5</div>
         </div>
-        <h2 id="step-title">Select Your Region</h2>
-        <p id="step-desc" style="color: var(--text-secondary); margin-bottom: 24px;">Choose the country where your passport was issued.</p>
+        <h2 id="step-title">{{ ui('register.step1_title') }}</h2>
+        <p id="step-desc" style="color: var(--text-secondary); margin-bottom: 24px;">{{ ui('register.step1_desc') }}</p>
     </div>
 
     <form id="kyc-form" class="auth-form" action="/register" method="POST">
@@ -25,15 +25,15 @@
         <div class="form-step" id="step1">
             <div class="form-group">
                 <select name="region" id="region-select" style="width: 100%; padding: 14px; border-radius: 8px; border: 1px solid var(--border); font-size: 1rem;">
-                    <option value="">Select Country</option>
-                    <option value="Turkmenistan">Turkmenistan</option>
-                    <option value="USA">United States</option>
-                    <option value="Turkey">Turkey</option>
-                    <option value="UAE">UAE</option>
-                    <option value="Russia">Russia</option>
+                    <option value="">{{ ui('register.select_country') }}</option>
+                    <option value="Turkmenistan">{{ 'Türkmenistan' if current_locale == 'tm' else ('Туркменистан' if current_locale == 'ru' else 'Turkmenistan') }}</option>
+                    <option value="USA">{{ 'ABŞ' if current_locale == 'tm' else ('США' if current_locale == 'ru' else 'United States') }}</option>
+                    <option value="Turkey">{{ 'Türkiýe' if current_locale == 'tm' else ('Турция' if current_locale == 'ru' else 'Turkey') }}</option>
+                    <option value="UAE">{{ 'BAA' if current_locale == 'tm' else ('ОАЭ' if current_locale == 'ru' else 'UAE') }}</option>
+                    <option value="Russia">{{ 'Russiýa' if current_locale == 'tm' else ('Россия' if current_locale == 'ru' else 'Russia') }}</option>
                 </select>
             </div>
-            <button type="button" class="auth-btn next-btn" disabled>Continue</button>
+            <button type="button" class="auth-btn next-btn" disabled>{{ ui('register.continue') }}</button>
         </div>
 
         <!-- Step 2: Camera Capture -->
@@ -46,22 +46,22 @@
             
             <div style="display: flex; gap: 10px; justify-content: center; margin-bottom: 20px;">
                 <button type="button" id="capture-btn" class="auth-btn" style="background: white; color: black; border: 2px solid var(--accent); flex: 1;">
-                    <i class="fas fa-camera"></i> Capture
+                    <i class="fas fa-camera"></i> {{ ui('upload.capture') }}
                 </button>
                 <div style="flex: 1; position: relative; overflow: hidden;">
                     <button type="button" class="auth-btn" style="background: #f3f4f6; color: black; border: 1px solid var(--border); width: 100%;">
-                        <i class="fas fa-file-upload"></i> Upload File
+                        <i class="fas fa-file-upload"></i> {{ ui('upload.file_upload') }}
                     </button>
                     <input type="file" id="passport-file" accept="image/*" style="position: absolute; top: 0; left: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer;">
                 </div>
             </div>
 
             <div style="background: #f9fafb; padding: 15px; border-radius: 12px; font-size: 0.8rem; border-left: 4px solid var(--accent);">
-                <p><strong><i class="fas fa-shield-alt"></i> Manual Verification:</strong> Please provide a clear photo of your passport. Our administrators will verify your identity manually.</p>
+                <p><strong><i class="fas fa-shield-alt"></i> {{ ui('register.manual_verification') }}</strong> {{ ui('register.manual_verification_text') }}</p>
             </div>
 
             <div id="processing-msg" style="display: none; margin-top: 10px; text-align: center; color: var(--accent);">
-                <i class="fas fa-spinner fa-spin"></i> Preparing document...
+                <i class="fas fa-spinner fa-spin"></i> {{ ui('register.preparing_document') }}
             </div>
             <input type="hidden" name="passport_image" id="passport_image">
         </div>
@@ -69,58 +69,58 @@
         <!-- Step 3: Personal Details -->
         <div class="form-step" id="step3" style="display: none;">
             <div class="form-group">
-                <label style="font-size: 0.8rem; font-weight: 700;">Full Name (as in passport)</label>
-                <input type="text" name="full_name" id="full_name" placeholder="Full Name">
+                <label style="font-size: 0.8rem; font-weight: 700;">{{ ui('register.full_name_passport') }}</label>
+                <input type="text" name="full_name" id="full_name" placeholder="{{ ui('register.full_name') }}">
             </div>
             <div class="form-group">
-                <label style="font-size: 0.8rem; font-weight: 700;">Age</label>
-                <input type="number" name="age" id="age" placeholder="Age">
+                <label style="font-size: 0.8rem; font-weight: 700;">{{ ui('register.age') }}</label>
+                <input type="number" name="age" id="age" placeholder="{{ ui('register.age') }}">
             </div>
             <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: -10px; margin-bottom: 20px;">
-                <i class="fas fa-info-circle"></i> Please ensure the information matches your uploaded passport exactly.
+                <i class="fas fa-info-circle"></i> {{ ui('register.matches_passport') }}
             </p>
-            <button type="button" class="auth-btn next-btn">Confirm Details</button>
+            <button type="button" class="auth-btn next-btn">{{ ui('register.confirm_details') }}</button>
         </div>
 
         <!-- Step 4: Rental Contract -->
         <div class="form-step" id="step4" style="display: none;">
             <div style="background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 20px; height: 200px; overflow-y: scroll; margin-bottom: 20px; font-size: 0.85rem; line-height: 1.6; color: var(--text-secondary);">
-                <h4 style="color: var(--text-main); margin-top: 0;">HandShake Rental Agreement</h4>
-                <p>By using HandShake, you agree to the following terms:</p>
+                <h4 style="color: var(--text-main); margin-top: 0;">{{ ui('register.agreement_title') }}</h4>
+                <p>{{ ui('register.agreement_intro') }}</p>
                 <ol>
-                    <li><strong>Item Condition:</strong> You must return items in the same condition as received.</li>
-                    <li><strong>Late Fees:</strong> A late fee of 15% per day will be applied to delayed returns.</li>
-                    <li><strong>Damages:</strong> You are fully responsible for any damages incurred during the rental period.</li>
-                    <li><strong>Verification:</strong> You confirm that all identity documents provided are genuine.</li>
+                    <li><strong>{{ ui('register.agreement_item') }}</strong> {{ ui('register.agreement_item_text') }}</li>
+                    <li><strong>{{ ui('register.agreement_late') }}</strong> {{ ui('register.agreement_late_text') }}</li>
+                    <li><strong>{{ ui('register.agreement_damage') }}</strong> {{ ui('register.agreement_damage_text') }}</li>
+                    <li><strong>{{ ui('register.agreement_verify') }}</strong> {{ ui('register.agreement_verify_text') }}</li>
                 </ol>
-                <p>Failure to comply with these rules will result in immediate account suspension and potential legal action.</p>
+                <p>{{ ui('register.agreement_outro') }}</p>
             </div>
 
             <div class="form-group">
-                <label style="font-size: 0.8rem; font-weight: 700;">Verification Question: What is the late fee percentage mentioned above?</label>
-                <input type="text" id="contract-answer" placeholder="Type the percentage (e.g. 50%)" style="border: 2px solid var(--border);">
+                <label style="font-size: 0.8rem; font-weight: 700;">{{ ui('register.verification_question') }}</label>
+                <input type="text" id="contract-answer" placeholder="{{ ui('register.answer_placeholder') }}" style="border: 2px solid var(--border);">
             </div>
             
-            <button type="button" class="auth-btn next-btn">Accept & Sign</button>
+            <button type="button" class="auth-btn next-btn">{{ ui('register.accept_sign') }}</button>
         </div>
 
         <!-- Step 5: Account Details -->
         <div class="form-step" id="step5" style="display: none;">
             <div class="form-group">
-                <input type="email" name="email" placeholder="Email Address" required>
+                <input type="email" name="email" placeholder="{{ t('auth.email_address') }}" required>
             </div>
             <div class="form-group">
-                <input type="password" name="password" placeholder="Set Password" required>
+                <input type="password" name="password" placeholder="{{ t('auth.password') }}" required>
             </div>
             <div class="form-group">
-                <input type="password" name="confirm_password" placeholder="Confirm Password" required>
+                <input type="password" name="confirm_password" placeholder="{{ t('auth.confirm_new_password') }}" required>
             </div>
-            <button type="submit" class="auth-btn">Finish Registration</button>
+            <button type="submit" class="auth-btn">{{ ui('register.finish') }}</button>
         </div>
     </form>
     
     <div class="auth-footer" id="footer-login">
-        Already have an account? <a href="/login">Log in</a>
+        {{ ui('register.have_account') }} <a href="/login">{{ t('nav.login') }}</a>
     </div>
 </div>
 
@@ -151,11 +151,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const passportImageInput = document.getElementById('passport_image');
 
     const stepData = {
-        1: ["Select Your Region", "Choose the country where your passport was issued."],
-        2: ["Passport KYC", "Take a clear photo of your passport's main page."],
-        3: ["Personal Details", "Enter the information as it appears on your document."],
-        4: ["Legal Agreement", "Please read the rental contract carefully."],
-        5: ["Create Account", "Set your login credentials to finish."]
+        1: ["{{ ui('register.step1_title') }}", "{{ ui('register.step1_desc') }}"],
+        2: ["{{ ui('register.passport_kyc') }}", "{{ ui('register.passport_photo') }}"],
+        3: ["{{ ui('register.personal_details') }}", "{{ ui('register.personal_details_desc') }}"],
+        4: ["{{ ui('register.legal_agreement') }}", "{{ ui('register.legal_agreement_desc') }}"],
+        5: ["{{ ui('register.create_account') }}", "{{ ui('register.create_account_desc') }}"]
     };
 
     function updateStepUI() {
@@ -188,14 +188,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 const fullName = document.getElementById('full_name').value;
                 const age = document.getElementById('age').value;
                 if (!fullName || !age) {
-                    alert("Please fill in all details.");
+                    alert("{{ ui('register.fill_all') }}");
                     return;
                 }
             }
             if (currentStep === 4) {
                 const answer = document.getElementById('contract-answer').value.trim();
                 if (answer !== '15%') {
-                    alert("Incorrect answer. Please read the contract carefully to find the late fee percentage.");
+                    alert("{{ ui('register.incorrect_answer') }}");
                     return;
                 }
             }
